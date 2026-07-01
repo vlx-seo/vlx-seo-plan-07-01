@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VLX — Review dev.vlx.ai · 2026-07-01</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --brand: #FF5722; --brand-dark: #E64A19; --brand-light: #FF8A65;
+  --surface-dark: #1E293B; --surface-darker: #0F172A;
+  --slide-w: 1280px; --slide-h: 720px;
+}
+body { font-family:'Rubik',system-ui,sans-serif; background:#0a0f1a; display:flex; flex-direction:column; align-items:center; gap:4px; padding:20px 0; }
+.slide { width:var(--slide-w); height:var(--slide-h); position:relative; overflow:hidden; flex-shrink:0; }
+.accent-bar { position:absolute; top:0; left:0; right:0; height:4px; background:var(--brand); }
+.grid-bg { position:absolute; inset:0; background-image:linear-gradient(rgba(255,87,34,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,87,34,.04) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; }
+.overline { font-size:11px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:#fff; }
+
+/* ── Cover ── */
+.slide-cover { background:var(--surface-darker); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px; text-align:center; }
+.slide-cover h1 { font-size:52px; font-weight:700; color:#fff; line-height:1.1; }
+.slide-cover h1 span { color:var(--brand); }
+.slide-cover .subtitle { font-size:20px; color:#94A3B8; }
+.slide-cover .meta { display:flex; gap:32px; margin-top:8px; }
+.meta-item { display:flex; flex-direction:column; align-items:center; gap:4px; }
+.meta-item span:first-child { font-size:13px; color:#64748B; text-transform:uppercase; letter-spacing:.06em; }
+.meta-item span:last-child { font-size:16px; color:#CBD5E1; font-weight:500; }
+.tagline { font-size:13px; color:#475569; font-style:italic; position:absolute; bottom:28px; }
+
+/* ── Status ── */
+.slide-status { background:var(--surface-darker); padding:52px 64px; display:flex; flex-direction:column; gap:36px; }
+.slide-status .sh { display:flex; justify-content:space-between; align-items:flex-start; }
+.slide-status h2 { font-size:38px; font-weight:700; color:#fff; }
+.score-badge { display:flex; flex-direction:column; align-items:center; background:rgba(255,87,34,.12); border:1px solid rgba(255,87,34,.3); border-radius:16px; padding:16px 28px; gap:4px; }
+.score-num { font-size:48px; font-weight:700; color:var(--brand); line-height:1; }
+.score-label { font-size:12px; color:#fff; text-transform:uppercase; letter-spacing:.08em; }
+.score-verdict { font-size:13px; color:#EF4444; font-weight:600; }
+.status-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.status-card { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:20px 24px; }
+.s-label { font-size:11px; color:#fff; text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
+.s-value { font-size:22px; font-weight:600; color:#fff; }
+.s-sub { font-size:13px; color:#fff; margin-top:4px; }
+.status-card.orange { border-color:rgba(255,87,34,.3); } .status-card.orange .s-value { color:var(--brand); }
+.status-card.red .s-value { color:#EF4444; }
+.status-card.green .s-value { color:#22C55E; }
+
+/* ── Blocker slide ── */
+.slide-blockers { background:var(--surface-darker); padding:40px 64px; display:flex; flex-direction:column; gap:20px; }
+.slide-blockers h2 { font-size:34px; font-weight:700; color:#fff; }
+.deck-sub { font-size:14px; color:#fff; margin-top:4px; }
+.blockers-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; flex:1; }
+.blocker-card { background:rgba(255,255,255,.03); border-radius:10px; padding:14px 16px; display:flex; flex-direction:column; gap:6px; border-left:3px solid var(--brand); }
+.blocker-card.high { border-left-color:#F59E0B; }
+.blocker-card.done { opacity:.55; }
+.blocker-card.done .b-title { text-decoration:line-through; color:#4ADE80; }
+.b-id { font-size:11px; font-weight:600; color:var(--brand); text-transform:uppercase; letter-spacing:.05em; }
+.blocker-card.high .b-id { color:#F59E0B; }
+.b-title { font-size:13px; font-weight:600; color:#fff; line-height:1.3; }
+.b-fix { font-size:11px; color:#fff; line-height:1.4; }
+.b-footer { display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:6px; }
+.b-pill { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:.05em; padding:2px 8px; border-radius:4px; }
+.pill-effort { background:rgba(255,255,255,.07); color:#fff; }
+.blocker-note { background:rgba(34,197,94,.08); border:1px solid rgba(34,197,94,.2); border-radius:8px; padding:10px 16px; font-size:13px; color:#4ADE80; }
+
+/* ── Phase slides ── */
+.slide-phase { background:var(--surface-darker); padding:40px 64px; display:flex; flex-direction:column; gap:20px; }
+.phase-header { display:flex; justify-content:space-between; align-items:flex-end; }
+.ph-left h2 { font-size:34px; font-weight:700; color:#fff; }
+.ph-left .ph-left .ph-sub { font-size:13px; color:#fff; margin-top:4px; }
+.phase-badge { background:rgba(255,87,34,.1); border:1px solid rgba(255,87,34,.25); border-radius:8px; padding:8px 16px; text-align:center; }
+.pb-label { font-size:10px; color:#fff; text-transform:uppercase; letter-spacing:.08em; }
+.pb-value { font-size:16px; font-weight:600; color:var(--brand); }
+.progress-counter { font-size:12px; color:#fff; margin-top:2px; }
+.progress-counter .done-count { color:#22C55E; font-weight:600; }
+
+/* ── Task table ── */
+.task-table { width:100%; border-collapse:collapse; }
+.task-table th { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:.08em; color:#475569; padding:0 10px 8px; text-align:left; border-bottom:1px solid rgba(255,255,255,.06); }
+.task-table td { font-size:12.5px; color:#fff; padding:6px 10px; border-bottom:1px solid rgba(255,255,255,.04); vertical-align:middle; font-weight:400; }
+.td-initiative { font-weight:700; color:#fff; user-select:text; }
+.td-initiative .task-desc, .td-initiative .task-desc * { font-weight:400 !important; user-select:text; }
+.task-row td { user-select:text; }
+.task-row { user-select:text; }
+.task-row.done td { opacity:.5; }
+.task-row.done .td-initiative { text-decoration:line-through; color:#4ADE80; }
+.qw-badge { display:inline-flex; align-items:center; font-size:10px; font-weight:600; color:#22C55E; background:rgba(34,197,94,.1); border-radius:4px; padding:1px 5px; margin-left:4px; }
+.impact-critical { color:#EF4444 !important; font-weight:600; font-size:11px; }
+.impact-high { color:#F59E0B !important; font-weight:600; font-size:11px; }
+/* ── Time-based classification ── */
+.time-hoy     { color:#EF4444 !important; font-weight:700; font-size:11px; }
+.time-semana1 { color:#F97316 !important; font-weight:600; font-size:11px; }
+.time-mes1    { color:#EAB308 !important; font-weight:600; font-size:11px; }
+.time-mes2    { color:#22C55E !important; font-weight:600; font-size:11px; }
+.time-mes3  { color:#84CC16 !important; font-weight:600; font-size:11px; }
+.time-continuo{ color:#94A3B8 !important; font-weight:500; font-size:11px; }
+.effort-xs { color:#22C55E; font-size:11px; }
+.effort-s  { color:#84CC16; font-size:11px; }
+.effort-m  { color:#F59E0B; font-size:11px; }
+.owner-lau  { color:#fff; font-size:11px; }
+.owner-lau-abe { color:#fff; font-size:11px; }
+
+/* ── Interactive controls ── */
+.td-controls { white-space:nowrap; }
+.done-btn {
+  width:22px; height:22px; border-radius:50%; border:1.5px solid #334155; background:transparent;
+  color:#475569; font-size:13px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+  transition:all .15s; vertical-align:middle; margin-right:6px;
+}
+.done-btn:hover { border-color:#22C55E; color:#22C55E; }
+.done-btn.is-done { border-color:#22C55E; background:rgba(34,197,94,.15); color:#22C55E; }
+.b-done-btn {
+  width:20px; height:20px; border-radius:50%; border:1.5px solid #334155; background:transparent;
+  color:#475569; font-size:11px; cursor:pointer; display:inline-flex; align-items:center; justify-content:center;
+  transition:all .15s;
+}
+.b-done-btn:hover { border-color:#22C55E; color:#22C55E; }
+.b-done-btn.is-done { border-color:#22C55E; background:rgba(34,197,94,.15); color:#22C55E; }
+.owner-pills { display:inline-flex; gap:3px; vertical-align:middle; }
+.b-owner-pills { display:flex; gap:3px; }
+.owner-pill {
+  font-size:9px; font-weight:600; padding:2px 6px; border-radius:3px; border:1px solid rgba(255,255,255,.1);
+  background:transparent; color:#475569; cursor:pointer; transition:all .15s; text-transform:uppercase; letter-spacing:.04em;
+}
+.owner-pill:hover { border-color:var(--brand); color:var(--brand-light); }
+.owner-pill.active { background:rgba(255,87,34,.2); border-color:var(--brand); color:var(--brand-light); }
+
+/* ── Capacity slide ── */
+.slide-capacity { background:var(--surface-darker); padding:52px 64px; display:flex; gap:48px; align-items:stretch; }
+.capacity-left { flex:1; display:flex; flex-direction:column; gap:28px; justify-content:center; }
+.capacity-left h2 { font-size:36px; font-weight:700; color:#fff; }
+.cap-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.cap-item { background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07); border-radius:10px; padding:16px 18px; }
+.ci-label { font-size:11px; color:#fff; text-transform:uppercase; letter-spacing:.07em; margin-bottom:6px; }
+.ci-value { font-size:20px; font-weight:600; color:#fff; }
+.ci-sub { font-size:12px; color:#fff; margin-top:4px; }
+.capacity-right { width:340px; display:flex; flex-direction:column; gap:12px; justify-content:center; }
+.priority-row { display:flex; align-items:center; gap:14px; background:rgba(255,255,255,.03); border-radius:10px; padding:14px 18px; }
+.priority-icon { font-size:22px; flex-shrink:0; }
+.pr-text { font-size:13px; color:#fff; line-height:1.4; }
+.pr-text strong { color:var(--brand); }
+
+/* ── KPI slide ── */
+.slide-kpis { background:var(--surface-darker); padding:44px 64px; display:flex; flex-direction:column; gap:28px; }
+.slide-kpis h2 { font-size:34px; font-weight:700; color:#fff; }
+.kpi-table { width:100%; border-collapse:collapse; }
+.kpi-table th { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:#fff; padding:10px 16px; text-align:left; background:rgba(255,255,255,.03); border-bottom:1px solid rgba(255,255,255,.08); }
+.kpi-table th.target { color:var(--brand-light); }
+.kpi-table td { font-size:14px; color:#fff; padding:11px 16px; border-bottom:1px solid rgba(255,255,255,.05); }
+.kpi-table td.mn { color:#fff; font-weight:600; }
+.kpi-table td.bl { color:#fff; }
+.kpi-table td.t30 { color:#84CC16; }
+.kpi-table td.t60 { color:#22C55E; }
+.kpi-table td.t90 { color:#4ADE80; font-weight:600; }
+
+/* ── Closing ── */
+.slide-close { background:var(--surface-darker); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:28px; }
+.next-title { font-size:13px; color:#fff; text-transform:uppercase; letter-spacing:.08em; }
+.next-list { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.next-list li { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.03); border-radius:10px; padding:12px 20px; font-size:14px; color:#fff; width:600px; }
+.step-num { width:24px; height:24px; background:var(--brand); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff; flex-shrink:0; }
+
+@media print {
+  body { background:#000; padding:0; gap:0; }
+  .slide { page-break-after:always; break-after:page; }
+  .done-btn, .b-done-btn, .owner-pills, .b-owner-pills, .b-owner-pills, .page-controls, .add-row-btn { display:none; }
+}
+
+/* ── Dependencies ── */
+.dep-badge{display:inline-flex;align-items:center;gap:4px;font-size:9.5px;font-weight:500;color:#F59E0B;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:4px;padding:2px 7px;margin-top:4px;cursor:help;position:relative}
+.dep-badge::after{content:attr(data-dep-tip);position:absolute;bottom:calc(100% + 6px);left:0;background:#1E293B;border:1px solid rgba(245,158,11,.4);color:#E2E8F0;font-size:11px;font-weight:400;padding:6px 10px;border-radius:6px;width:220px;text-align:left;white-space:normal;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9999}
+.dep-badge:hover::after{opacity:1}
+.dep-badge .dep-label{color:#94A3B8}
+
+/* ── Drag reorder ── */
+.drag-handle{cursor:grab;color:#334155;font-size:13px;padding:0 6px 0 2px;user-select:none;flex-shrink:0}
+.drag-handle:hover{color:var(--brand-light)}
+.task-row.dragging{opacity:.4;background:rgba(255,87,34,.05)}
+.task-row.drag-over{border-top:2px solid var(--brand)}
+
+/* ── Tooltips ── */
+.has-tip{position:relative;cursor:help}
+.has-tip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:#1E293B;border:1px solid rgba(255,87,34,.4);color:#E2E8F0;font-size:11px;font-weight:400;line-height:1.5;padding:10px 14px;border-radius:8px;width:260px;text-align:left;white-space:normal;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.has-tip:hover::after{opacity:1}
+.tip-icon{font-size:10px;color:#64748B;margin-left:4px;vertical-align:middle}
+
+/* ── Lang / Details / Sort / Modal ── */
+.t-es{display:none}
+body.es .t-en{display:none}
+body.es .t-es{display:inline}
+.task-desc{display:none;font-size:10.5px;color:#fff;font-weight:400;line-height:1.5;margin-top:5px;border-left:2px solid rgba(255,87,34,.4);padding-left:7px}
+body.show-details .task-desc{display:block}
+body.show-details .slide{height:auto;min-height:var(--slide-h)}
+.page-controls{position:fixed;top:14px;right:14px;z-index:9999;display:flex;gap:6px;background:rgba(15,23,42,.95);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:8px 12px;backdrop-filter:blur(8px)}
+.ctrl-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#94A3B8;font-family:'Rubik',sans-serif;font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;cursor:pointer;text-transform:uppercase;letter-spacing:.05em;transition:all .15s}
+.ctrl-btn:hover,.ctrl-btn.active{border-color:var(--brand);color:var(--brand-light);background:rgba(255,87,34,.12)}
+.show-es{display:none}
+body.es .show-en{display:none}
+body.es .show-es{display:inline}
+.btn-d-off{display:inline}.btn-d-on{display:none}
+body.show-details .btn-d-off{display:none}
+body.show-details .btn-d-on{display:inline}
+.th-sort{cursor:pointer;user-select:none}.th-sort:hover{color:var(--brand-light)}
+.sort-icon{font-size:9px;color:#334155;margin-left:3px}
+.add-row-btn{background:none;border:none;color:#475569;font-size:11px;cursor:pointer;padding:6px 10px;transition:color .15s;font-family:'Rubik',sans-serif}
+.add-row-btn:hover{color:var(--brand-light)}
+.add-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:10000;align-items:center;justify-content:center}
+.add-modal-overlay.open{display:flex}
+.add-modal{background:#1E293B;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:24px;width:460px;display:flex;flex-direction:column;gap:12px}
+.add-modal h3{font-size:15px;font-weight:600;color:#fff}
+.add-modal input,.add-modal select{background:#0F172A;border:1px solid rgba(255,255,255,.12);border-radius:6px;color:#CBD5E1;font-family:'Rubik',sans-serif;font-size:12px;padding:7px 10px;width:100%}
+.add-modal-row{display:flex;gap:8px}
+.add-modal-row>*{flex:1}
+.add-modal-btns{display:flex;gap:8px;justify-content:flex-end}
+.custom-task-id{font-size:11px;color:#8B5CF6;font-weight:600}
+.del-btn{background:none;border:none;color:#334155;cursor:pointer;font-size:13px;padding:0 4px;transition:color .15s}
+.del-btn:hover{color:#EF4444}
+</style>
+</head>
+<body>
+
+<!-- ── Floating Controls ── -->
+<div class="page-controls">
+  <button class="ctrl-btn" onclick="toggleLang()" id="lang-btn"><span class="show-en">ES</span><span class="show-es">EN</span></button>
+  <button class="ctrl-btn" onclick="toggleDetails()" id="details-btn"><span class="btn-d-off"><span class="t-en">+ Details</span><span class="t-es">+ Detalles</span></span><span class="btn-d-on"><span class="t-en">− Details</span><span class="t-es">− Detalles</span></span></button>
+  <button class="ctrl-btn" onclick="openAddModal()"><span class="t-en">+ Task</span><span class="t-es">+ Tarea</span></button>
+</div>
+
+<!-- ═══ SLIDE 1 — COVER ═══ -->
+<div class="slide slide-cover">
+  <div class="accent-bar"></div><div class="grid-bg"></div>
+  <div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="520 440 680 210" style="height:56px;width:auto">
+      <defs><style>.o{fill:#ff5722}.w{fill:#fff}</style></defs>
+      <polygon class="w" points="846.4 628.15 840.53 614.3 838.24 614.3 845.32 630.67 847.49 630.67 854.68 614.3 852.4 614.3 846.4 628.15"/>
+      <polygon class="w" points="864.7 623.21 873.15 623.21 873.15 621.43 864.7 621.43 864.7 616.16 874.43 616.16 874.43 614.3 862.61 614.3 862.61 630.67 875 630.67 875 628.84 864.7 628.84 864.7 623.21"/>
+      <polygon class="w" points="888.97 549.61 872.59 511.43 857.95 477.33 822.22 477.33 837.93 511.43 872.78 587.07 904.46 587.07 958.68 477.33 923.14 477.33 888.97 549.61"/>
+      <path class="w" d="M1020.32,558.92c-7.23,0-13.12-5.89-13.12-13.12v-106.71h-33.46v107.54c0,22.3,18.14,40.44,40.44,40.44h2.73l24.01-28.15h-20.6Z"/>
+      <polygon class="w" points="1104.02 557.33 1129.09 587.07 1171.48 587.07 1124.95 532.51 1170.71 478.23 1129.39 478.23 1104.02 507.98 1077.88 477.33 1036.57 477.33 1083.09 532.51 1036.56 587.07 1078.95 587.07 1094.59 568.52 1104.02 557.33"/>
+      <path class="o" d="M706.42,527.32l-1.01,1.78-23.65,40.96c-5.05,8.75-14.47,14.19-24.58,14.19h-45.63l14.73-25.48,1.01-1.78,23.65-40.96c5.05-8.75,14.47-14.19,24.58-14.19h45.63l-14.73,25.48ZM763.99,501.83h-42.85l-21.48-37.23h-26.38c-22.07,0-42.64,11.88-53.67,31l-29.49,51.12-25.89-44.88h-43.08l47.55,82.42h42.84l21.49,37.23h26.38c22.07,0,42.63-11.88,53.66-31l29.15-50.51.36.61,25.17,43.66h43.8l-47.55-82.42Z"/>
+    </svg>
+  </div>
+  <div>
+    <h1><span class="t-en">dev.vlx.ai <span>Review</span></span><span class="t-es">Review <span>dev.vlx.ai</span></span></h1>
+    <div class="subtitle"><span class="t-en">Post-Audit Follow-up · Pre-Migration</span><span class="t-es">Seguimiento Post-Auditoría · Pre-Migración</span></div>
+  </div>
+  <div class="meta">
+    <div class="meta-item"><span>Site</span><span>dev.vlx.ai</span></div>
+    <div class="meta-item"><span>Baseline</span><span><span class="t-en">Jun 19 · 81/100</span><span class="t-es">19-jun · 81/100</span></span></div>
+    <div class="meta-item"><span><span class="t-en">Date</span><span class="t-es">Fecha</span></span><span>2026-07-01</span></div>
+    <div class="meta-item"><span><span class="t-en">Auditor</span><span class="t-es">Auditora</span></span><span>Laura Ceballos</span></div>
+  </div>
+  <div class="tagline"><span class="t-en">Verify, then Trust®</span><span class="t-es">Verificar, luego Confiar®</span></div>
+</div>
+
+<!-- ═══ SLIDE 2 — METHODOLOGY NOTE ═══ -->
+<div class="slide slide-blockers">
+  <div class="accent-bar"></div><div class="grid-bg"></div>
+  <div>
+    <div class="overline"><span class="t-en">Read before the rest</span><span class="t-es">Leer antes que el resto</span></div>
+    <h2><span class="t-en">Methodology Note</span><span class="t-es">Nota Metodológica</span></h2>
+    <div class="deck-sub"><span class="t-en">Method: own crawler running inside the authenticated browser (<code style="color:#FF8A65;font-size:11px">fetch()</code> inherits the session cookie) over the 185 sitemap URLs + spot checks of old WordPress URLs.</span><span class="t-es">Método: crawler propio ejecutado dentro del navegador autenticado (<code style="color:#FF8A65;font-size:11px">fetch()</code> hereda la cookie de sesión) sobre las 185 URLs del sitemap + pruebas puntuales de URLs antiguas de WordPress.</span></div>
+  </div>
+  <div class="blockers-grid">
+    <div class="blocker-card">
+      <div class="b-id">① <span class="t-en">Access</span><span class="t-es">Acceso</span></div>
+      <div class="b-title"><span class="t-en">AWS ALB + Cognito (OAuth2)</span><span class="t-es">AWS ALB + Cognito (OAuth2)</span></div>
+      <div class="b-fix"><span class="t-en">dev.vlx.ai is behind AWS ALB + Cognito (email/password OAuth2, not basic auth). The browser already had an active session — I never needed to test the credentials you gave me (<code style="color:#FF8A65;font-size:10px">laura.ceballos@softwarecraftcr.com</code>).</span><span class="t-es">dev.vlx.ai está protegido por AWS ALB + Cognito (login OAuth2 por email/password, no auth básica). El navegador ya tenía sesión activa — no llegué a probar las credenciales que me diste (<code style="color:#FF8A65;font-size:10px">laura.ceballos@softwarecraftcr.com</code>), no hizo falta.</span></div>
+    </div>
+    <div class="blocker-card">
+      <div class="b-id">② <span class="t-en">External tools blocked</span><span class="t-es">Herramientas externas bloqueadas</span></div>
+      <div class="b-title"><span class="t-en">PSI · Lighthouse · CrUX · public crawlers</span><span class="t-es">PSI · Lighthouse · CrUX · crawlers públicos</span></div>
+      <div class="b-fix"><span class="t-en">None can audit this URL — they lack the Cognito session cookie. All performance data here comes from the Navigation Timing API measured manually in the authenticated browser, not from Lighthouse.</span><span class="t-es">No pueden auditar esta URL — no tienen la cookie de sesión de Cognito. Todo lo de performance viene de Navigation Timing API medido manualmente en el navegador autenticado, no de Lighthouse.</span></div>
+    </div>
+    <div class="blocker-card">
+      <div class="b-id">③ GSC / GA4</div>
+      <div class="b-title"><span class="t-en">Not a verified property</span><span class="t-es">No es propiedad verificada</span></div>
+      <div class="b-fix"><span class="t-en">dev.vlx.ai is not a verified property — no real-traffic baseline applies yet (it is pre-launch).</span><span class="t-es">dev.vlx.ai no es una propiedad verificada — no aplica baseline de tráfico real todavía (es pre-lanzamiento).</span></div>
+    </div>
+    <div class="blocker-card">
+      <div class="b-id">④ <span class="t-en">Out of scope this pass</span><span class="t-es">Fuera de alcance</span></div>
+      <div class="b-title"><span class="t-en">Backlinks · Keywords · ASO · GMB</span><span class="t-es">Backlinks · Keywords · ASO · GMB</span></div>
+      <div class="b-fix"><span class="t-en">No changes since the Jun 19 audit (they don't depend on the site code) — not repeated in this pass.</span><span class="t-es">Sin cambios desde la auditoría del 19-jun (no dependen del código del sitio) — no se repitieron en esta pasada.</span></div>
+    </div>
+    <div class="blocker-card high" style="grid-column:span 2">
+      <div class="b-id">🔴 <span class="t-en">Doubt to validate with Hans / Abe</span><span class="t-es">Duda para validar con Hans / Abe</span></div>
+      <div class="b-title"><span class="t-en">Homepage H1 changed brand positioning vs Jun 19</span><span class="t-es">El H1 de homepage cambió el posicionamiento de marca vs 19-jun</span></div>
+      <div class="b-fix"><span class="t-en">The homepage H1 now reads <em>"The AI-Native Enterprise Platform for [Inspections/…]"</em> (typewriter animation) — a different brand positioning than what we saw on Jun 19 (<em>"Run Your Inspection Business on VLX"</em>). It may be normal evolution of the <code style="color:#FF8A65;font-size:10px">Hans-review</code> branch, or a different branch/environment. <strong>Confirm with the team which branch is deployed on dev.vlx.ai</strong> before treating this as a 1:1 comparison.</span><span class="t-es">El H1 de homepage ahora dice <em>"The AI-Native Enterprise Platform for [Inspections/…]"</em> (animación tipo typewriter) — un posicionamiento de marca distinto al que vimos el 19-jun (<em>"Run Your Inspection Business on VLX"</em>). Puede ser evolución normal de la rama <code style="color:#FF8A65;font-size:10px">Hans-review</code>, o puede ser una rama/ambiente distinto. <strong>Confirmar con el equipo qué rama está desplegada en dev.vlx.ai</strong> antes de dar por buena esta comparación 1:1.</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 3 — STATUS ═══ -->
+<div class="slide slide-status">
+  <div class="accent-bar"></div><div class="grid-bg"></div>
+  <div class="sh">
+    <div><div class="overline"><span class="t-en">Follow-up · Jul 1 2026</span><span class="t-es">Seguimiento · 1 Jul 2026</span></div><h2><span class="t-en">Where We Stand</span><span class="t-es">Dónde Estamos</span></h2></div>
+    <div class="score-badge">
+      <div class="score-num">4/7</div>
+      <div class="score-label"><span class="t-en">Must-Fix Resolved</span><span class="t-es">Must-Fix Resueltos</span></div>
+      <div class="score-verdict"><span class="t-en">1 CRITICAL STILL OPEN</span><span class="t-es">1 CRÍTICO SIN RESOLVER</span></div>
+    </div>
+  </div>
+  <div class="status-grid">
+    <div class="status-card green has-tip" data-tip-en="Of the 7 mandatory fixes from Jun 19: aggregateRating, blog category 308s, use-case 404 redirects and the homepage H1 are resolved. Paid LP redirects remain unresolved. LCP and blog SSR are partial." data-tip-es="De los 7 arreglos obligatorios del 19-jun: aggregateRating, 308 de categorías de blog, redirects 404 de use-case y el H1 de homepage están resueltos. Los redirects de LPs pagas siguen sin resolver. LCP y SSR del blog quedan parciales."><div class="s-label"><span class="t-en">Must-Fix from Jun 19</span><span class="t-es">Must-Fix del 19-jun</span></div><div class="s-value">4 ✅ · 1 ❌ · 2 🟡</div><div class="s-sub"><span class="t-en">7 mandatory fixes tracked</span><span class="t-es">7 arreglos obligatorios seguidos</span></div></div>
+    <div class="status-card orange has-tip" data-tip-en="6 findings not present in the Jun 19 audit: 1 critical (blog main pagination), 2 high (old WP slugs, titles/meta out of range), 1 positive (compare pages gained schema), 2 low (decorative icons without alt, sitemap grew)." data-tip-es="6 hallazgos que no estaban en la auditoría del 19-jun: 1 crítico (paginación principal del blog), 2 altos (slugs viejos de WP, títulos/meta fuera de rango), 1 positivo (compare pages ganaron schema), 2 bajos (íconos decorativos sin alt, sitemap creció)."><div class="s-label"><span class="t-en">New Findings</span><span class="t-es">Hallazgos Nuevos</span></div><div class="s-value">6</div><div class="s-sub"><span class="t-en">1🔴 · 2🟡 · 1🟢 · 2⚪</span><span class="t-es">1🔴 · 2🟡 · 1🟢 · 2⚪</span></div></div>
+    <div class="status-card red has-tip" data-tip-en="The 13 paid landing pages (Capterra/G2/LinkedIn) from AUDIT-MIGRATIONS-EN-2026-05-28 still return 404. The /lp/ folder is in robots.txt (disallow) but has no content yet. With active ad spend, this is money dropping into 404s." data-tip-es="Las 13 landing pages pagas (Capterra/G2/LinkedIn) de AUDIT-MIGRATIONS-EN-2026-05-28 siguen dando 404. La carpeta /lp/ está en robots.txt (disallow) pero no tiene contenido todavía. Con inversión activa en ads, esto es dinero cayendo en 404."><div class="s-label"><span class="t-en">Critical Blocker</span><span class="t-es">Bloqueador Crítico</span></div><div class="s-value">13 LPs</div><div class="s-sub"><span class="t-en">Paid landing pages → 404</span><span class="t-es">Landing pages pagas → 404</span></div></div>
+    <div class="status-card orange has-tip" data-tip-en="46 of 185 pages still lack og:image: the 12 industry/app pages, 11 blog posts, and 22 more (pricing, integrations, demo, checklists index, whats-new, security, developers, etc.)." data-tip-es="46 de 185 páginas siguen sin og:image: las 12 páginas de industria/app, 11 posts de blog, y 22 páginas más (pricing, integrations, demo, checklists index, whats-new, security, developers, etc.)."><div class="s-label"><span class="t-en">Missing og:image</span><span class="t-es">og:image Faltantes</span></div><div class="s-value">46 / 185</div><div class="s-sub"><span class="t-en">12 industry + 11 blog + 23 other</span><span class="t-es">12 industria + 11 blog + 23 otras</span></div></div>
+    <div class="status-card orange has-tip" data-tip-en="39/185 pages have an empty title or one over 60 characters; 47/185 have an empty meta description or one over 160 characters. Worth a cleanup pass before launch." data-tip-es="39/185 páginas con title vacío o >60 caracteres; 47/185 con meta description vacía o >160 caracteres. Vale una pasada de limpieza antes de lanzar."><div class="s-label"><span class="t-en">Titles / Meta out of range</span><span class="t-es">Titles / Meta fuera de rango</span></div><div class="s-value">39 / 47</div><div class="s-sub"><span class="t-en">titles &gt;60c · meta &gt;160c</span><span class="t-es">titles &gt;60c · meta &gt;160c</span></div></div>
+    <div class="status-card green has-tip" data-tip-en="Sitemap grew from 175 to 185 URLs, 100% canonicalized to vlx.ai (production domain) though served from dev.vlx.ai. SSR works: every page returns full HTML with H1/schema/links without needing JS (confirmed via raw fetch)." data-tip-es="El sitemap creció de 175 a 185 URLs, 100% canonicalizado a vlx.ai (dominio de producción) aunque se sirve desde dev.vlx.ai. SSR funcionando: todas las páginas devuelven HTML completo con H1/schema/links sin necesitar JS (confirmado vía fetch crudo)."><div class="s-label"><span class="t-en">Sitemap + SSR</span><span class="t-es">Sitemap + SSR</span></div><div class="s-value">185 URLs</div><div class="s-sub"><span class="t-en">SSR OK · 100% canonical to vlx.ai</span><span class="t-es">SSR OK · 100% canonical a vlx.ai</span></div></div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 4 — 7 MANDATORY FIXES ═══ -->
+<div class="slide slide-blockers">
+  <div class="accent-bar"></div><div class="grid-bg"></div>
+  <div>
+    <div class="overline"><span class="t-en">Must-Fix from Jun 19 audit</span><span class="t-es">Must-fix del 19-jun</span></div>
+    <h2><span class="t-en">7 Mandatory Fixes</span><span class="t-es">7 Arreglos Obligatorios</span> <span id="blockers-counter" style="font-size:16px;color:#475569;font-weight:400;margin-left:12px"><span class="done-count">4</span>/<span class="total-count">7</span> <span class="t-en">resolved</span><span class="t-es">resueltos</span></span></h2>
+    <div class="deck-sub"><span class="t-en">4 resolved · 1 not resolved · 2 partial · baseline 81/100 "Go ahead with conditions"</span><span class="t-es">4 resueltos · 1 no resuelto · 2 parciales · baseline 81/100 "Adelante con condiciones"</span></div>
+  </div>
+  <div class="blockers-grid">
+    <!-- M1 -->
+    <div id="task-M1" class="blocker-card high task-row">
+      <div class="b-id">🟡 M1 · <span class="t-en">LCP hub 7.9s</span><span class="t-es">LCP hub 7.9s</span></div>
+      <div class="b-title"><span class="t-en">Probably resolved (not precisely verifiable)</span><span class="t-es">Probablemente resuelto (no verificable con precisión)</span></div>
+      <div class="b-fix"><span class="t-en">Navigation Timing on /digital-inspections-software/: TTFB 82ms, load event 354ms — orders of magnitude better. Could not capture the exact LCP (PerformanceObserver returned no entries via automation) nor run PSI (blocked by Cognito).</span><span class="t-es">Navigation Timing en /digital-inspections-software/: TTFB 82ms, load event 354ms — órdenes de magnitud mejor. No pude capturar el LCP exacto (PerformanceObserver no devolvió entradas vía automatización) ni correr PSI (bloqueado por Cognito).</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort"><span class="t-en">Verify w/ PSI</span><span class="t-es">Verificar c/ PSI</span></span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('M1')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('M1','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('M1','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('M1','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- M2 -->
+    <div id="task-M2" class="blocker-card task-row done">
+      <div class="b-id">✅ M2 · aggregateRating</div>
+      <div class="b-title"><span class="t-en">4.9/20 hardcoded rating removed</span><span class="t-es">4.9/20 hardcodeado removido</span></div>
+      <div class="b-fix"><span class="t-en">Full sweep of the 185 pages: aggregateRating no longer appears on any. They removed it instead of fixing it — the safer option.</span><span class="t-es">Barrido completo de las 185 páginas: aggregateRating no aparece en ninguna. Lo quitaron en vez de arreglarlo — opción más segura.</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">✅ <span class="t-en">Resolved</span><span class="t-es">Resuelto</span></span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn is-done" onclick="toggleDone('M2')">✓</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('M2','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('M2','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('M2','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- M3 -->
+    <div id="task-M3" class="blocker-card task-row done">
+      <div class="b-id">✅ M3 · <span class="t-en">blog category 308s</span><span class="t-es">308 categorías blog</span></div>
+      <div class="b-title"><span class="t-en">5 /blog/category/* URLs with 308 in sitemap</span><span class="t-es">5 URLs /blog/category/* con 308 en sitemap</span></div>
+      <div class="b-fix"><span class="t-en">The 8 category URLs in the sitemap now return 200 directly, no redirect. (Partially superseded by a new finding — see N1.)</span><span class="t-es">Las 8 URLs de categoría en el sitemap devuelven 200 directo, no redirigen. (Parcialmente reemplazado por un hallazgo nuevo — ver N1.)</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">✅ <span class="t-en">Resolved</span><span class="t-es">Resuelto</span></span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn is-done" onclick="toggleDone('M3')">✓</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('M3','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('M3','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('M3','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- M4 -->
+    <div id="task-M4" class="blocker-card task-row done">
+      <div class="b-id">✅ M4 · <span class="t-en">use-case 404s</span><span class="t-es">404 de use-case</span></div>
+      <div class="b-title"><span class="t-en">2 /use-case/ redirects with 404</span><span class="t-es">2 redirects /use-case/ con 404</span></div>
+      <div class="b-fix"><span class="t-en">/use-case/a-guide-to-prevent-insurance-fraud → /digital-inspections-software/insurance/ (200); .../strengthening-trust-in-financial-lending-… → /digital-inspections-software/financial-services/ (200). Exactly the recommended targets.</span><span class="t-es">/use-case/a-guide-to-prevent-insurance-fraud → /digital-inspections-software/insurance/ (200); .../strengthening-trust-in-financial-lending-… → /digital-inspections-software/financial-services/ (200). Exactamente los destinos recomendados.</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">✅ <span class="t-en">Resolved</span><span class="t-es">Resuelto</span></span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn is-done" onclick="toggleDone('M4')">✓</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('M4','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('M4','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('M4','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- M5 -->
+    <div id="task-M5" class="blocker-card task-row">
+      <div class="b-id">❌ M5 · <span class="t-en">Critical</span><span class="t-es">Crítico</span></div>
+      <div class="b-title"><span class="t-en">Paid LP redirects (Capterra/G2/LinkedIn) — NOT resolved</span><span class="t-es">Redirects de LPs pagas (Capterra/G2/LinkedIn) — NO resuelto</span></div>
+      <div class="b-fix"><span class="t-en">Tested the 13 LPs without redirect from AUDIT-MIGRATIONS-EN-2026-05-28 → all 13 still 404 (/landing-inspection-software-capterra-a/, /landing-inspection-software-g2/, /landing-inspections-software-linkedin/, etc.). The 3 that did redirect still point to generic pages, not /lp/[campaign]/. And /lp/capterra/, /lp/g2/, /lp/linkedin/ don't exist either (404) — /lp/ is in robots.txt (disallow) but has no content yet.</span><span class="t-es">Probadas las 13 LPs sin redirect de AUDIT-MIGRATIONS-EN-2026-05-28 → las 13 siguen dando 404 (/landing-inspection-software-capterra-a/, /landing-inspection-software-g2/, /landing-inspections-software-linkedin/, etc.). Las 3 que sí redirigían siguen apuntando a páginas genéricas, no a /lp/[campaña]/. Y las rutas /lp/capterra/, /lp/g2/, /lp/linkedin/ tampoco existen (404) — la carpeta /lp/ está en robots.txt (disallow) pero no tiene contenido todavía.</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort" style="background:rgba(239,68,68,.12);color:#EF4444">❌ <span class="t-en">Open</span><span class="t-es">Abierto</span></span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('M5')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('M5','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('M5','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('M5','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- M6 -->
+    <div id="task-M6" class="blocker-card task-row done">
+      <div class="b-id">✅ M6 · <span class="t-en">Homepage H1 spacing</span><span class="t-es">Espaciado H1 homepage</span></div>
+      <div class="b-title"><span class="t-en">H1 "VerificationInspections" without space</span><span class="t-es">H1 "VerificationInspections" sin espacio</span></div>
+      <div class="b-fix"><span class="t-en">Current HTML: "The AI-Native Enterprise Platform for Inspections" — correct spacing, no concatenation. (See the branch doubt on the methodology slide.)</span><span class="t-es">HTML actual: "The AI-Native Enterprise Platform for Inspections" — espaciado correcto, sin concatenación. (Ver la duda de rama en la nota metodológica.)</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">✅ <span class="t-en">Resolved</span><span class="t-es">Resuelto</span></span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn is-done" onclick="toggleDone('M6')">✓</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('M6','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('M6','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('M6','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- M7 -->
+    <div id="task-M7" class="blocker-card high task-row">
+      <div class="b-id">🟡 M7 · <span class="t-en">Blog SSR + pagination</span><span class="t-es">SSR blog + paginación</span></div>
+      <div class="b-title"><span class="t-en">Partial — with a new regression</span><span class="t-es">Parcial — con regresión nueva</span></div>
+      <div class="b-fix"><span class="t-en">Blog category pagination came out fine, but the main blog pagination broke in a different way. See finding N1 below.</span><span class="t-es">La paginación de categorías de blog quedó bien, pero la paginación principal del blog se rompió de otra forma. Ver hallazgo N1 abajo.</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort"><span class="t-en">See N1</span><span class="t-es">Ver N1</span></span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('M7')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('M7','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('M7','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('M7','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="blocker-note"><span class="t-en">✅ 4 resolved (M2, M3, M4, M6) · ❌ 1 not resolved (M5 paid LPs) · 🟡 2 partial (M1 LCP, M7 blog pagination)</span><span class="t-es" style="display:none">✅ 4 resueltos (M2, M3, M4, M6) · ❌ 1 no resuelto (M5 LPs pagas) · 🟡 2 parciales (M1 LCP, M7 paginación blog)</span></div>
+</div>
+
+<!-- ═══ SLIDE 5 — RECOMMENDED (NON-BLOCKING) ═══ -->
+<div class="slide slide-phase" id="slide-recomendados">
+  <div class="accent-bar"></div><div class="grid-bg"></div>
+  <div class="phase-header">
+    <div class="ph-left">
+      <div class="overline"><span class="t-en">Recommended · non-blocking</span><span class="t-es">Recomendados · no bloqueantes</span></div>
+      <h2><span class="t-en">Recommended Items — Status</span><span class="t-es">Recomendados — Estado</span></h2>
+      <div class="ph-sub"><span class="t-en">Status of the non-blocking recommendations from the Jun 19 audit.</span><span class="t-es">Estado de los recomendados no bloqueantes de la auditoría del 19-jun.</span></div>
+    </div>
+    <div class="phase-badge">
+      <div class="pb-label"><span class="t-en">Resolved</span><span class="t-es">Resueltos</span></div>
+      <div class="pb-value">3 / 5</div>
+      <div class="progress-counter"><span class="done-count">0</span>/<span class="total-count">5</span> <span class="t-en">done</span><span class="t-es">hechos</span></div>
+    </div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th><span class="t-en">Item</span><span class="t-es">Ítem</span></th><th class="th-sort" onclick="sortPhase(this,'impact')" data-sort="impact"><span class="t-en">Status</span><span class="t-es">Estado</span><span class="sort-icon">↕</span></th><th class="th-sort" onclick="sortPhase(this,'effort')" data-sort="effort"><span class="t-en">Effort left</span><span class="t-es">Esfuerzo rest.</span><span class="sort-icon">↕</span></th><th><span class="t-en">Owner</span><span class="t-es">Responsable</span></th><th><span class="t-en">Done</span><span class="t-es">Hecho</span></th></tr></thead>
+    <tbody>
+      <tr id="task-R1" class="task-row done"><td>R1</td><td class="td-initiative"><span class="t-en">4 industry H1 copywriting (construction/safety/hospitality/mining)</span><span class="t-es">4 H1 de industria copywriting (construction/safety/hospitality/mining)</span><div class="task-desc"><span class="t-en">All 4 are now keyword-led: "Construction Inspection Software for Jobsite Safety & QA", "Safety Inspection Software for EHS Teams", "Hospitality Inspection Software for Brand-Standard Audits", "Mining Inspection Software for Safety & Compliance". 12/12 industries with keyword-oriented H1 (was 8/12).</span><span class="t-es">Los 4 ahora son keyword-led: "Construction Inspection Software for Jobsite Safety & QA", "Safety Inspection Software for EHS Teams", "Hospitality Inspection Software for Brand-Standard Audits", "Mining Inspection Software for Safety & Compliance". 12/12 industrias con H1 orientado a keyword (antes 8/12).</span></div></td><td class="td-impact time-mes2">✅ <span class="t-en">Resolved</span><span class="t-es">Resuelto</span></td><td class="td-effort">—</td><td class="owner-lau">Lau</td><td class="td-controls"><button class="done-btn" onclick="toggleDone('R1')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('R1','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('R1','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('R1','Abe')">Abe</button></div></td></tr>
+      <tr id="task-R2" class="task-row done"><td>R2</td><td class="td-initiative"><span class="t-en">6 industries missing from menu/footer</span><span class="t-es">6 industrias faltantes en menú/footer</span><div class="task-desc"><span class="t-en">Footer + mega-menu now link the 18 industries + KYPiT (previously missing vehicle, construction, safety, hospitality, mining, inspection-companies).</span><span class="t-es">Footer + mega-menú ahora enlazan las 18 industrias + KYPiT (antes faltaban vehicle, construction, safety, hospitality, mining, inspection-companies).</span></div></td><td class="td-impact time-mes2">✅ <span class="t-en">Resolved</span><span class="t-es">Resuelto</span></td><td class="td-effort">—</td><td class="owner-lau">Lau</td><td class="td-controls"><button class="done-btn" onclick="toggleDone('R2')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('R2','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('R2','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('R2','Abe')">Abe</button></div></td></tr>
+      <tr id="task-R3" class="task-row done"><td>R3</td><td class="td-initiative"><span class="t-en">Hub → body links to clusters</span><span class="t-es">Hub → body links a clusters</span><div class="task-desc"><span class="t-en">The hub now links the 19 child pages (18 industries + KYPiT) from the body — previously 18.</span><span class="t-es">El hub ahora enlaza las 19 páginas hijas (18 industrias + KYPiT) desde el cuerpo — antes 18.</span></div></td><td class="td-impact time-mes3">🟢 <span class="t-en">Improved</span><span class="t-es">Mejorado</span></td><td class="td-effort">—</td><td class="owner-lau">Lau</td><td class="td-controls"><button class="done-btn" onclick="toggleDone('R3')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('R3','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('R3','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('R3','Abe')">Abe</button></div></td></tr>
+      <tr id="task-R4" class="task-row"><td>R4</td><td class="td-initiative"><span class="t-en">Own OG images</span><span class="t-es">Imágenes OG propias</span><div class="task-desc"><span class="t-en">46 of 185 pages still lack og:image: the 12 industry/app pages, 11 blog posts, and 22 more (pricing, integrations, demo, checklists index, whats-new, security, developers, etc.).</span><span class="t-es">46 de 185 páginas siguen sin og:image: las 12 páginas de industria/app, 11 posts de blog, y 22 páginas más (pricing, integrations, demo, checklists index, whats-new, security, developers, etc.).</span></div></td><td class="td-impact time-mes1">🟡 <span class="t-en">Pending</span><span class="t-es">Pendiente</span></td><td class="td-effort effort-s">S</td><td class="owner-lau-abe">Lau / Abe</td><td class="td-controls"><button class="done-btn" onclick="toggleDone('R4')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('R4','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('R4','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('R4','Abe')">Abe</button></div></td></tr>
+      <tr id="task-R5" class="task-row"><td>R5</td><td class="td-initiative"><span class="t-en">Client-approved testimonials</span><span class="t-es">Testimonios aprobados por cliente</span><div class="task-desc"><span class="t-en">Not verifiable from the crawl (requires client confirmation, not code).</span><span class="t-es">No verificable desde el crawl (requiere confirmación del cliente, no del código).</span></div></td><td class="td-impact time-continuo">⚪ <span class="t-en">N/A from crawl</span><span class="t-es">No verificable</span></td><td class="td-effort">—</td><td class="owner-lau">Lau</td><td class="td-controls"><button class="done-btn" onclick="toggleDone('R5')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('R5','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('R5','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('R5','Abe')">Abe</button></div></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ SLIDE 6 — NEW FINDINGS ═══ -->
+<div class="slide slide-phase" id="slide-hallazgos">
+  <div class="accent-bar"></div><div class="grid-bg"></div>
+  <div class="phase-header">
+    <div class="ph-left">
+      <div class="overline"><span class="t-en">Not in the Jun 19 audit</span><span class="t-es">No estaban en la auditoría del 19-jun</span></div>
+      <h2><span class="t-en">New Findings</span><span class="t-es">Hallazgos Nuevos</span></h2>
+      <div class="ph-sub"><span class="t-en">6 findings surfaced in this pass. Severity in the Status column.</span><span class="t-es">6 hallazgos surgidos en esta pasada. Severidad en la columna Estado.</span></div>
+    </div>
+    <div class="phase-badge">
+      <div class="pb-label"><span class="t-en">Findings</span><span class="t-es">Hallazgos</span></div>
+      <div class="pb-value">1🔴 2🟡 1🟢 2⚪</div>
+      <div class="progress-counter"><span class="done-count">0</span>/<span class="total-count">6</span> <span class="t-en">done</span><span class="t-es">hechos</span></div>
+    </div>
+  </div>
+  <table class="task-table">
+    <thead><tr><th>ID</th><th><span class="t-en">Finding</span><span class="t-es">Hallazgo</span></th><th class="th-sort" onclick="sortPhase(this,'impact')" data-sort="impact"><span class="t-en">Severity</span><span class="t-es">Severidad</span><span class="sort-icon">↕</span></th><th class="th-sort" onclick="sortPhase(this,'effort')" data-sort="effort"><span class="t-en">Fix effort</span><span class="t-es">Esfuerzo fix</span><span class="sort-icon">↕</span></th><th><span class="t-en">Owner</span><span class="t-es">Responsable</span></th><th><span class="t-en">Done</span><span class="t-es">Hecho</span></th></tr></thead>
+    <tbody>
+      <tr id="task-N1" class="task-row"><td>N1</td><td class="td-initiative"><span class="t-en">Blog main pagination: sitemap says one thing, the site does another</span><span class="t-es">Paginación principal del blog: sitemap dice una cosa, el sitio hace otra</span><div class="task-desc"><span class="t-en">The sitemap lists /blog/page/2/ … /blog/page/10/ (9 URLs, clean path format — what was requested). But visiting them: they redirect to /blog/?page=N (query param), and that destination has noindex, nofollow and canonical → /blog/ (page 1). Google will crawl the sitemap URL, get bounced to a param URL, and that URL says "don't index me, my canonical is another page" — contradictory signal + crawl budget wasted on 9 URLs. Contrast: category pagination (/blog/category/industry-trends/page/2/) works fine — 200 direct, index/follow, self-referencing canonical. They fixed one type of pagination and broke the other.</span><span class="t-es">El sitemap lista /blog/page/2/ … /blog/page/10/ (9 URLs, formato de ruta limpio — lo que se pidió). Pero al visitarlas: redirigen a /blog/?page=N (parámetro de consulta), y esa página de destino tiene noindex, nofollow y canonical → /blog/ (página 1). Google va a rastrear la URL del sitemap, lo van a rebotar a una URL con parámetro, y esa URL le va a decir "no me indexes, mi canonical es otra página" — señal contradictoria + presupuesto de rastreo desperdiciado en 9 URLs. Contraste: la paginación de categorías (/blog/category/industry-trends/page/2/) sí funciona bien — 200 directo, index/follow, canonical auto-referenciado. Arreglaron un tipo de paginación y rompieron el otro.</span></div></td><td class="td-impact time-hoy">🔴 <span class="t-en">Critical</span><span class="t-es">Crítico</span></td><td class="td-effort effort-xs">XS</td><td class="owner-lau-abe">Lau / Abe</td><td class="td-controls"><button class="done-btn" onclick="toggleDone('N1')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('N1','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('N1','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('N1','Abe')">Abe</button></div></td></tr>
+      <tr id="task-N2" class="task-row"><td>N2</td><td class="td-initiative"><span class="t-en">Two old WordPress slugs without redirect</span><span class="t-es">Dos slugs viejos de WordPress sin redirect</span><div class="task-desc"><span class="t-en">/oil-and-gas/ and /financial-institutions/ (pre-slug-change names) return 404 instead of redirecting to /digital-inspections-software/oil-gas/ and /digital-inspections-software/financial-services/. Low historic traffic, but it's pending migration hygiene.</span><span class="t-es">/oil-and-gas/ y /financial-institutions/ (nombres pre-cambio de slug) devuelven 404 en vez de redirigir a /digital-inspections-software/oil-gas/ y /digital-inspections-software/financial-services/. Tráfico histórico bajo, pero es higiene de migración pendiente.</span></div></td><td class="td-impact time-mes1">🟡 <span class="t-en">Medium</span><span class="t-es">Medio</span></td><td class="td-effort effort-xs">XS</td><td class="owner-abe">Abe</td><td class="td-controls"><button class="done-btn" onclick="toggleDone('N2')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('N2','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('N2','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('N2','Abe')">Abe</button></div></td></tr>
+      <tr id="task-N3" class="task-row"><td>N3</td><td class="td-initiative"><span class="t-en">Titles and meta descriptions out of range</span><span class="t-es">Títulos y meta descripciones fuera de rango</span><div class="task-desc"><span class="t-en">39/185 pages with an empty title or one over 60 characters; 47/185 with an empty meta description or one over 160 characters. This wasn't explicitly measured on Jun 19; worth a cleanup pass before launch.</span><span class="t-es">39/185 páginas con title vacío o >60 caracteres; 47/185 con meta description vacía o >160 caracteres. No se había medido esto explícitamente el 19-jun; vale la pena una pasada de limpieza antes de lanzar.</span></div></td><td class="td-impact time-mes1">🟡 <span class="t-en">Medium</span><span class="t-es">Medio</span></td><td class="td-effort effort-s">S</td><td class="owner-lau">Lau</td><td class="td-controls"><button class="done-btn" onclick="toggleDone('N3')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('N3','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('N3','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('N3','Abe')">Abe</button></div></td></tr>
+      <tr id="task-N4" class="task-row"><td>N4</td><td class="td-initiative"><span class="t-en">Compare pages gained basic schema</span><span class="t-es">Compare pages ganaron schema básico</span><div class="task-desc"><span class="t-en">/compare/vlx-vs-safetyculture/ and /compare/vlx-vs-goaudits/ went from 0 schema to Organization + WebSite + BreadcrumbList. Still missing a specific comparison/product schema, but it's a net improvement.</span><span class="t-es">/compare/vlx-vs-safetyculture/ y /compare/vlx-vs-goaudits/ pasaron de 0 schema a Organization + WebSite + BreadcrumbList. Sigue faltando un schema específico de comparación/producto, pero es mejora neta.</span></div></td><td class="td-impact time-mes3">🟢 <span class="t-en">Positive</span><span class="t-es">Positivo</span></td><td class="td-effort effort-xs">XS</td><td class="owner-lau">Lau</td><td class="td-controls"><button class="done-btn" onclick="toggleDone('N4')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('N4','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('N4','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('N4','Abe')">Abe</button></div></td></tr>
+      <tr id="task-N5" class="task-row"><td>N5</td><td class="td-initiative"><span class="t-en">Decorative icons without alt (low severity)</span><span class="t-es">Iconos decorativos sin alt (severidad baja)</span><div class="task-desc"><span class="t-en">32/37 images in the hub without an alt attribute — they are small SVG icons next to the industry links (e.g. /images/icons/construction.svg), redundant with the link text. Low priority; ideally alt="" explicit instead of omitting the attribute. Not the same issue as the generic "Trusted customer" on client logos reported before (that wasn't retested in this pass).</span><span class="t-es">32/37 imágenes en el hub sin atributo alt — son íconos SVG pequeños junto a los links de industria (ej. /images/icons/construction.svg), redundantes con el texto del link. Baja prioridad; lo ideal es alt="" explícito en vez de omitir el atributo. No es el mismo problema que el de "Trusted customer" genérico en logos de clientes reportado antes (eso no se volvió a probar en esta pasada).</span></div></td><td class="td-impact time-continuo">⚪ <span class="t-en">Low</span><span class="t-es">Baja</span></td><td class="td-effort effort-xs">XS</td><td class="owner-abe">Abe</td><td class="td-controls"><button class="done-btn" onclick="toggleDone('N5')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('N5','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('N5','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('N5','Abe')">Abe</button></div></td></tr>
+      <tr id="task-N6" class="task-row"><td>N6</td><td class="td-initiative"><span class="t-en">Sitemap grew from 175 → 185 URLs</span><span class="t-es">Sitemap creció de 175 → 185 URLs</span><div class="task-desc"><span class="t-en">10 new URLs since the Jun 19 inventory (the line-by-line detail wasn't investigated, just the count).</span><span class="t-es">10 URLs nuevas desde el inventario del 19-jun (no se investigó el detalle línea por línea, solo el conteo).</span></div></td><td class="td-impact time-continuo">⚪ <span class="t-en">Info</span><span class="t-es">Info</span></td><td class="td-effort">—</td><td class="owner-lau">Lau</td><td class="td-controls"><button class="done-btn" onclick="toggleDone('N6')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('N6','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('N6','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('N6','Abe')">Abe</button></div></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ SLIDE 7 — CONFIRMED SOLID / LIMITATIONS ═══ -->
+<div class="slide slide-capacity">
+  <div class="accent-bar"></div><div class="grid-bg"></div>
+  <div class="capacity-left">
+    <div>
+      <div class="overline"><span class="t-en">No changes for the worse</span><span class="t-es">Sin cambios para mal</span></div>
+      <h2><span class="t-en">Confirmed Solid</span><span class="t-es">Confirmado Sólido</span></h2>
+      <div style="font-size:14px;color:#64748B;margin-top:8px"><span class="t-en">What holds up from the Jun 19 audit — verified again in this pass.</span><span class="t-es">Lo que se sostiene desde la auditoría del 19-jun — verificado de nuevo en esta pasada.</span></div>
+    </div>
+    <div class="cap-grid">
+      <div class="cap-item"><div class="ci-label"><span class="t-en">Sitemap canonicalization</span><span class="t-es">Canonicalización del sitemap</span></div><div class="ci-value">100% vlx.ai</div><div class="ci-sub"><span class="t-en">Correct for launch — point audit tools at the dev host meanwhile.</span><span class="t-es">Correcto para el lanzamiento — apuntar las herramientas al host de dev mientras tanto.</span></div></div>
+      <div class="cap-item"><div class="ci-label">robots.txt</div><div class="ci-value"><span class="t-en">AI posture intact</span><span class="t-es">Postura IA intacta</span></div><div class="ci-sub"><span class="t-en">Perplexity / OAI-SearchBot / Applebot allowed; GPTBot / ClaudeBot / CCBot / Amazonbot blocked.</span><span class="t-es">Perplexity / OAI-SearchBot / Applebot permitidos; GPTBot / ClaudeBot / CCBot / Amazonbot bloqueados.</span></div></div>
+      <div class="cap-item"><div class="ci-label">SSR</div><div class="ci-value"><span class="t-en">Full HTML, no JS</span><span class="t-es">HTML completo, sin JS</span></div><div class="ci-sub"><span class="t-en">Every page returns full HTML with H1/schema/links — confirmed via raw fetch (what Googlebot sees).</span><span class="t-es">Todas las páginas devuelven HTML completo con H1/schema/links — confirmado vía fetch crudo (lo que ve Googlebot).</span></div></div>
+      <div class="cap-item" style="border-color:rgba(255,87,34,.3)"><div class="ci-label">llms.txt</div><div class="ci-value" style="color:var(--brand)"><span class="t-en">Present · 5.9KB</span><span class="t-es">Presente · 5.9KB</span></div><div class="ci-sub"><span class="t-en">Still present, but its content was not audited this pass.</span><span class="t-es">Sigue presente, pero no se auditó su contenido en esta pasada.</span></div></div>
+    </div>
+  </div>
+  <div class="capacity-right">
+    <div style="font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:#64748B"><span class="t-en">Limitations of this pass</span><span class="t-es">Limitaciones de esta pasada</span></div>
+    <div class="priority-row"><div class="priority-icon">🔒</div><div class="pr-text"><strong><span class="t-en">Real performance</span><span class="t-es">Performance real</span></strong> <span class="t-en">(Lighthouse/PSI/CrUX) — blocked by the Cognito wall</span><span class="t-es">(Lighthouse/PSI/CrUX) — bloqueado por el muro de Cognito</span></div></div>
+    <div class="priority-row"><div class="priority-icon">📊</div><div class="pr-text"><strong><span class="t-en">GSC/GA4 baseline</span><span class="t-es">Baseline GSC/GA4</span></strong> <span class="t-en">— dev.vlx.ai is not a verified property</span><span class="t-es">— dev.vlx.ai no es propiedad verificada</span></div></div>
+    <div class="priority-row"><div class="priority-icon">🔗</div><div class="pr-text"><strong><span class="t-en">Backlinks / Keywords / SERP</span><span class="t-es">Backlinks / Keywords / SERP</span></strong> <span class="t-en">— no changes since Jun 19</span><span class="t-es">— sin cambios desde el 19-jun</span></div></div>
+    <div class="priority-row"><div class="priority-icon">🤖</div><div class="pr-text"><strong><span class="t-en">GEO / AI</span><span class="t-es">GEO / IA</span></strong> <span class="t-en">(prompts in ChatGPT/Perplexity) — not repeated; llms.txt present (5.9KB) but content not audited</span><span class="t-es">(prompts en ChatGPT/Perplexity) — no se repitió; llms.txt presente (5.9KB) pero contenido sin auditar</span></div></div>
+  </div>
+</div>
+
+<!-- ═══ SLIDE 8 — NEXT STEPS ═══ -->
+<div class="slide slide-close">
+  <div class="accent-bar"></div><div class="grid-bg"></div>
+  <div>
+    <div class="overline" style="text-align:center"><span class="t-en">What comes next</span><span class="t-es">Lo que sigue</span></div>
+    <h2 style="font-size:36px;font-weight:700;color:#fff;text-align:center;margin-top:6px"><span class="t-en">Recommended Next Steps</span><span class="t-es">Próximos Pasos Recomendados</span></h2>
+  </div>
+  <ul class="next-list">
+    <li><span class="step-num">1</span><span><span class="t-en"><strong>Confirm with Hans/Abe</strong> exactly which branch/environment dev.vlx.ai is (homepage copy changed materially vs Jun 19).</span><span class="t-es"><strong>Confirmar con Hans/Abe</strong> qué rama/ambiente es exactamente dev.vlx.ai (el copy de homepage cambió de forma material vs. lo visto el 19-jun).</span></span></li>
+    <li><span class="step-num">2</span><span><span class="t-en"><strong>Fix the 13 paid landing pages</strong> — still the only unresolved critical blocker from the original list; with active Capterra/G2/LinkedIn spend this is money dropping into 404s.</span><span class="t-es"><strong>Arreglar las 13 landing pages pagas</strong> — sigue siendo el único bloqueador crítico sin resolver de la lista original; con inversión activa en Capterra/G2/LinkedIn esto es dinero cayendo en 404.</span></span></li>
+    <li><span class="step-num">3</span><span><span class="t-en"><strong>Fix /blog/page/N/</strong> — either remove them from the sitemap, or make them serve real content at that path (don't redirect to ?page=N with noindex).</span><span class="t-es"><strong>Corregir /blog/page/N/</strong> — o quitarlas del sitemap, o hacer que sirvan contenido real en esa ruta (no redirigir a ?page=N con noindex).</span></span></li>
+    <li><span class="step-num">4</span><span><span class="t-en"><strong>Add the 2 old redirects</strong> (/oil-and-gas/, /financial-institutions/).</span><span class="t-es"><strong>Agregar los 2 redirects viejos</strong> (/oil-and-gas/, /financial-institutions/).</span></span></li>
+    <li><span class="step-num">5</span><span><span class="t-en"><strong>Fill the 46 missing og:image</strong>, prioritizing the 12 industry pages (highest commercial intent).</span><span class="t-es"><strong>Rellenar los 46 og:image faltantes</strong>, priorizando las 12 páginas de industria (son las de mayor intención comercial).</span></span></li>
+    <li><span class="step-num">6</span><span><span class="t-en"><strong>Titles/meta descriptions pass</strong> on the ~40–47 pages out of range.</span><span class="t-es"><strong>Pasada de títulos/meta descriptions</strong> en las ~40-47 páginas fuera de rango.</span></span></li>
+    <li><span class="step-num">7</span><span><span class="t-en">Once the site is reachable without Cognito (or given a bypass), <strong>run real PSI/Lighthouse</strong> on the hub to confirm the LCP.</span><span class="t-es">Una vez el sitio esté accesible sin Cognito (o me den una forma de bypass), <strong>correr PSI/Lighthouse real</strong> sobre el hub para confirmar el LCP.</span></span></li>
+  </ul>
+</div>
+
+<!-- ── Add Task Modal ── -->
+<div class="add-modal-overlay" id="add-modal-overlay">
+  <div class="add-modal">
+    <h3><span class="t-en">Add Task</span><span class="t-es">Agregar Tarea</span></h3>
+    <input id="atm-desc" placeholder="Task description / Descripción de la tarea">
+    <div class="add-modal-row">
+      <select id="atm-phase">
+        <option value="slide-recomendados">Recomendados / Recommended</option>
+        <option value="slide-hallazgos">Hallazgos / New Findings</option>
+      </select>
+      <select id="atm-impact">
+        <option value="critical">CRITICAL</option>
+        <option value="high">HIGH</option>
+        <option value="medium">MEDIUM</option>
+      </select>
+      <select id="atm-effort">
+        <option value="xs">XS ≤1h</option>
+        <option value="s">S 1–3h</option>
+        <option value="m">M 3–8h</option>
+        <option value="l">L 8h+</option>
+      </select>
+    </div>
+    <div class="add-modal-btns">
+      <button class="ctrl-btn" onclick="closeAddModal()"><span class="t-en">Cancel</span><span class="t-es">Cancelar</span></button>
+      <button class="ctrl-btn active" onclick="saveCustomTask()"><span class="t-en">Save</span><span class="t-es">Guardar</span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEY = 'vlx-review-0701';
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || {}; } catch { return {}; }
+}
+function save(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+
+function toggleDone(id) {
+  const s = load();
+  if (!s[id]) s[id] = {};
+  s[id].done = !s[id].done;
+  save(s);
+  applyRow(id, s[id]);
+  refreshCounter(document.getElementById('task-' + id));
+}
+
+function setOwner(id, owner) {
+  const s = load();
+  if (!s[id]) s[id] = {};
+  s[id].owner = s[id].owner === owner ? null : owner;
+  save(s);
+  applyRow(id, s[id]);
+}
+
+function applyRow(id, state) {
+  const el = document.getElementById('task-' + id);
+  if (!el) return;
+  const done = !!state.done;
+  el.classList.toggle('done', done);
+  // done button (table rows use .done-btn, blocker cards use .b-done-btn)
+  const btn = el.querySelector('.done-btn') || el.querySelector('.b-done-btn');
+  if (btn) { btn.textContent = done ? '✓' : '○'; btn.classList.toggle('is-done', done); }
+  // owner pills
+  el.querySelectorAll('.owner-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.owner === state.owner);
+  });
+}
+
+function refreshCounter(el) {
+  if (!el) return;
+  const slide = el.closest('.slide');
+  if (!slide) return;
+  // blockers counter (special element)
+  const bc = slide.querySelector('#blockers-counter');
+  if (bc) {
+    const total = slide.querySelectorAll('.task-row').length;
+    const done  = slide.querySelectorAll('.task-row.done').length;
+    bc.querySelector('.done-count').textContent = done;
+    bc.querySelector('.total-count').textContent = total;
+    return;
+  }
+  // phase badge counter
+  const counter = slide.querySelector('.progress-counter');
+  if (!counter) return;
+  const total = slide.querySelectorAll('.task-row').length;
+  const done  = slide.querySelectorAll('.task-row.done').length;
+  counter.querySelector('.done-count').textContent = done;
+  counter.querySelector('.total-count').textContent = total;
+}
+
+// ── Lang / Details toggles ──
+function updateTooltips(isEs) {
+  document.querySelectorAll('[data-tip-en]').forEach(el => {
+    el.setAttribute('data-tip', isEs ? (el.getAttribute('data-tip-es')||'') : (el.getAttribute('data-tip-en')||''));
+  });
+}
+function toggleLang() {
+  const isEs = document.body.classList.toggle('es');
+  document.getElementById('lang-btn').classList.toggle('active', isEs);
+  localStorage.setItem('vlx-review-lang', isEs ? 'es' : 'en');
+  updateTooltips(isEs);
+}
+function toggleDetails() {
+  const show = document.body.classList.toggle('show-details');
+  document.getElementById('details-btn').classList.toggle('active', show);
+  localStorage.setItem('vlx-review-details', show ? '1' : '0');
+}
+
+// ── Sort ──
+function sortPhase(th, field) {
+  const slide = th.closest('.slide');
+  const tbody = slide.querySelector('tbody');
+  const rows = [...tbody.querySelectorAll('tr.task-row:not(.custom-row)')];
+  const ORDER = {
+    impact: {'impact-critical':0,'impact-high':1,'impact-medium':2},
+    effort: {'effort-xs':0,'effort-s':1,'effort-m':2,'effort-l':3}
+  };
+  rows.sort((a,b) => {
+    const cls = (r) => { const c=r.querySelector('.td-'+field); if(!c) return 9; for(const [k,v] of Object.entries(ORDER[field])) if(c.classList.contains(k)) return v; return 9; };
+    return cls(a)-cls(b);
+  });
+  rows.forEach(r => tbody.appendChild(r));
+  tbody.querySelectorAll('.custom-row').forEach(r => tbody.appendChild(r));
+  slide.querySelectorAll('.sort-icon').forEach(ic => ic.textContent='↕');
+  th.querySelector('.sort-icon').textContent='↑';
+}
+
+// ── Add Task ──
+const CKEY = 'vlx-review-custom-0701';
+function loadCustom() { try { return JSON.parse(localStorage.getItem(CKEY))||[]; } catch { return []; } }
+function saveCustom(arr) { localStorage.setItem(CKEY, JSON.stringify(arr)); }
+
+function openAddModal() { document.getElementById('add-modal-overlay').classList.add('open'); document.getElementById('atm-desc').focus(); }
+function closeAddModal() { document.getElementById('add-modal-overlay').classList.remove('open'); }
+
+function saveCustomTask() {
+  const desc = document.getElementById('atm-desc').value.trim();
+  if (!desc) return;
+  const phase = document.getElementById('atm-phase').value;
+  const impact = document.getElementById('atm-impact').value;
+  const effort = document.getElementById('atm-effort').value;
+  const id = 'c'+ Date.now();
+  const task = { id, desc, phase, impact, effort };
+  const arr = loadCustom(); arr.push(task); saveCustom(arr);
+  renderCustomTask(task);
+  document.getElementById('atm-desc').value='';
+  closeAddModal();
+}
+
+function renderCustomTask(task) {
+  const slide = document.getElementById(task.phase);
+  if (!slide) return;
+  const tbody = slide.querySelector('tbody');
+  const impactClass = 'impact-'+task.impact;
+  const impactLabel = task.impact.toUpperCase();
+  const effortClass = 'effort-'+task.effort;
+  const tr = document.createElement('tr');
+  tr.id = 'task-'+task.id; tr.className='task-row custom-row';
+  tr.innerHTML = `<td><span class="custom-task-id">+</span></td>
+    <td class="td-initiative">${task.desc}<div style="margin-top:4px"><button class="del-btn" onclick="deleteCustomTask('${task.id}')">✕</button></div></td>
+    <td class="td-impact ${impactClass}">${impactLabel}</td>
+    <td class="td-effort ${effortClass}">${task.effort.toUpperCase()}</td>
+    <td>—</td>
+    <td class="td-controls"><button class="done-btn" onclick="toggleDone('${task.id}')">○</button><div class="owner-pills"><button class="owner-pill" data-owner="Lau" onclick="setOwner('${task.id}','Lau')">Lau</button><button class="owner-pill" data-owner="Hans" onclick="setOwner('${task.id}','Hans')">Hans</button><button class="owner-pill" data-owner="Abe" onclick="setOwner('${task.id}','Abe')">Abe</button></div></td>`;
+  tbody.appendChild(tr);
+  refreshCounter(tr);
+}
+
+function deleteCustomTask(id) {
+  const arr = loadCustom().filter(t => t.id !== id);
+  saveCustom(arr);
+  const el = document.getElementById('task-'+id);
+  if (el) { refreshCounter(el); el.remove(); }
+}
+
+// Init on load
+document.addEventListener('DOMContentLoaded', () => {
+  const s = load();
+  Object.keys(s).forEach(id => applyRow(id, s[id]));
+  document.querySelectorAll('.task-row').forEach(row => refreshCounter(row));
+  // Restore lang + details
+  const isEs = localStorage.getItem('vlx-review-lang')==='es';
+  if (isEs) { document.body.classList.add('es'); document.getElementById('lang-btn').classList.add('active'); }
+  updateTooltips(isEs);
+  if (localStorage.getItem('vlx-review-details')==='1') { document.body.classList.add('show-details'); document.getElementById('details-btn').classList.add('active'); }
+  // Render custom tasks
+  loadCustom().forEach(renderCustomTask);
+  // Close modal on overlay click
+  document.getElementById('add-modal-overlay').addEventListener('click', e => { if(e.target===e.currentTarget) closeAddModal(); });
+  // Init drag-and-drop on all task rows
+  initDrag();
+  initTbodyDrop();
+  initDeps();
+  initCats();
+  initRecurring();
+  initSupabase();
+});
+
+// ── Supabase sync ──
+const SUPA_URL = 'https://vepnbdqpkfbjqwybaxim.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZlcG5iZHFwa2ZianF3eWJheGltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzMjIyODksImV4cCI6MjA5NTg5ODI4OX0.YBo0D7SOvfJeT5jGLuAqngBTMA8g4flkJICoiPELjDY';
+let supa = null;
+
+async function initSupabase() {
+  try {
+    supa = supabase.createClient(SUPA_URL, SUPA_KEY);
+    await syncStateFromSupabase();
+    console.log('Supabase connected');
+  } catch(e) { console.log('Supabase offline — using localStorage'); }
+}
+
+async function syncStateFromSupabase() {
+  if (!supa) return;
+  const { data } = await supa.from('review_0701_state').select('*');
+  if (!data) return;
+  data.forEach(state => {
+    const row = document.getElementById('task-' + state.task_id);
+    if (!row) return;
+    if (state.is_done) {
+      row.classList.add('done');
+      const btn = row.querySelector('.done-btn,.b-done-btn');
+      if (btn) { btn.textContent='✓'; btn.classList.add('is-done'); }
+    }
+    if (state.owner) {
+      row.querySelectorAll('.owner-pill').forEach(p => p.classList.toggle('active', p.dataset.owner === state.owner));
+    }
+  });
+}
+
+// Override toggleDone to sync with Supabase
+const _toggleDone = toggleDone;
+window.toggleDone = async function(id) {
+  _toggleDone(id);
+  const row = document.getElementById('task-' + id);
+  const isDone = row && row.classList.contains('done');
+  if (supa) await supa.from('review_0701_state').upsert({
+    task_id: id, is_done: isDone,
+    done_at: isDone ? new Date().toISOString() : null,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'task_id' });
+};
+
+// Override setOwner to sync with Supabase
+const _setOwner = setOwner;
+window.setOwner = async function(id, owner) {
+  _setOwner(id, owner);
+  if (supa) await supa.from('review_0701_state').upsert({
+    task_id: id, owner,
+    updated_at: new Date().toISOString()
+  }, { onConflict: 'task_id' });
+};
+
+// ── Drag & Drop reorder ──
+const DKEY = 'vlx-review-order-0701';
+function saveOrder(slideId, ids) { const o=JSON.parse(localStorage.getItem(DKEY)||'{}'); o[slideId]=ids; localStorage.setItem(DKEY,JSON.stringify(o)); }
+function loadOrder() { try { return JSON.parse(localStorage.getItem(DKEY)||'{}'); } catch { return {}; } }
+
+function initDrag() {
+  document.querySelectorAll('.task-table tbody').forEach(tbody => {
+    // Add drag handles
+    tbody.querySelectorAll('tr.task-row').forEach(row => {
+      if (row.querySelector('.drag-handle')) return;
+      const td = row.querySelector('td');
+      const handle = document.createElement('span');
+      handle.className = 'drag-handle'; handle.textContent = '⋮⋮'; handle.title = 'Drag to reorder';
+      td.insertBefore(handle, td.firstChild);
+      makeDraggable(row, tbody);
+    });
+    // Restore saved order
+    const slide = tbody.closest('.slide');
+    if (!slide || !slide.id) return;
+    const saved = loadOrder()[slide.id];
+    if (saved) {
+      saved.forEach(id => { const r=document.getElementById(id); if(r) tbody.appendChild(r); });
+    }
+  });
+}
+
+let dragSrc = null;
+let dragEnabled = false;
+
+// Phase prefix map for auto-rename
+const PHASE_PREFIX = {
+  'slide-recomendados':'R','slide-hallazgos':'N'
+};
+
+function getPhasePrefix(slide) {
+  if (!slide || !slide.id) return null;
+  return PHASE_PREFIX[slide.id] || null;
+}
+
+function applyTaskId(row, newId) {
+  const oldId = row.id.replace('task-','');
+  if (newId === oldId) return;
+  row.id = 'task-' + newId;
+  // Update visible ID cell (second child after drag handle)
+  const firstTd = row.querySelector('td');
+  if (firstTd) {
+    const nodes = [...firstTd.childNodes];
+    const textNode = nodes.find(n => n.nodeType === 3 && n.textContent.trim());
+    if (textNode) textNode.textContent = newId;
+  }
+  const doneBtn = row.querySelector('.done-btn, .b-done-btn');
+  if (doneBtn) doneBtn.setAttribute('onclick', `toggleDone('${newId}')`);
+  row.querySelectorAll('.owner-pill').forEach(p => {
+    p.setAttribute('onclick', `setOwner('${newId}','${p.dataset.owner}')`);
+  });
+  const s = load(); if (s[oldId]) { s[newId]=s[oldId]; delete s[oldId]; save(s); }
+}
+
+function renumberPhase(tbody) {
+  const slide = tbody.closest('.slide');
+  const prefix = getPhasePrefix(slide);
+  if (!prefix) return;
+  const rows = [...tbody.querySelectorAll('tr.task-row')].filter(r => !r.id.startsWith('task-c'));
+  rows.forEach((row, i) => applyTaskId(row, prefix + (i + 1)));
+}
+
+function renameTaskId(row, newPrefix) {
+  const oldId = row.id.replace('task-','');
+  const num = oldId.replace(/^[A-Za-z]+(\d+)$/, '$1');
+  if (!num || isNaN(num)) return;
+  const newId = newPrefix + num;
+  if (newId === oldId) return;
+  row.id = 'task-' + newId;
+  const firstTd = row.querySelector('td');
+  if (firstTd) {
+    const txt = firstTd.childNodes[0];
+    if (txt && txt.nodeType === 3) txt.textContent = newId;
+  }
+  const doneBtn = row.querySelector('.done-btn, .b-done-btn');
+  if (doneBtn) doneBtn.setAttribute('onclick', `toggleDone('${newId}')`);
+  // Update owner pills
+  row.querySelectorAll('.owner-pill').forEach(p => {
+    const owner = p.dataset.owner;
+    p.setAttribute('onclick', `setOwner('${newId}','${owner}')`);
+  });
+  // Transfer localStorage state
+  const s = load(); if (s[oldId]) { s[newId]=s[oldId]; delete s[oldId]; save(s); }
+}
+
+function makeDraggable(row, tbody) {
+  row.draggable = false;
+  const handle = row.querySelector('.drag-handle');
+  if (handle) {
+    handle.addEventListener('mousedown', () => { dragEnabled=true; row.draggable=true; });
+    handle.addEventListener('mouseup', () => { setTimeout(()=>{ dragEnabled=false; row.draggable=false; }, 100); });
+  }
+  row.addEventListener('dragstart', e => {
+    if (!dragEnabled) { e.preventDefault(); return; }
+    dragSrc=row; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move';
+  });
+  row.addEventListener('dragend', () => {
+    row.classList.remove('dragging'); dragEnabled=false;
+    document.querySelectorAll('.task-row').forEach(r => r.classList.remove('drag-over'));
+    // Renumber ALL phases sequentially after any drag
+    document.querySelectorAll('.slide[id] tbody').forEach(tb => renumberPhase(tb));
+    // Save order for all slides
+    document.querySelectorAll('.slide[id]').forEach(slide => {
+      const tb = slide.querySelector('tbody');
+      if (tb) saveOrder(slide.id, [...tb.querySelectorAll('tr.task-row')].map(r=>r.id));
+    });
+  });
+  // Allow drop on any task row (cross-phase)
+  row.addEventListener('dragover', e => {
+    e.preventDefault(); e.dataTransfer.dropEffect='move';
+    document.querySelectorAll('.task-row').forEach(r => r.classList.remove('drag-over'));
+    row.classList.add('drag-over');
+  });
+  row.addEventListener('drop', e => {
+    e.preventDefault();
+    if (!dragSrc || dragSrc===row) return;
+    const targetTbody = row.closest('tbody');
+    const rows = [...targetTbody.querySelectorAll('tr.task-row')];
+    const ti = rows.indexOf(row);
+    const si = rows.indexOf(dragSrc);
+    if (si === -1) {
+      // Cross-phase: insert before target
+      targetTbody.insertBefore(dragSrc, row);
+      // Re-init drag on moved row with new tbody
+      makeDraggable(dragSrc, targetTbody);
+    } else {
+      targetTbody.insertBefore(dragSrc, si > ti ? row : row.nextSibling);
+    }
+  });
+}
+
+// ── Dependencies ──
+const DEPS = {};
+
+// ── Categories ──
+const CAT_COLORS = {'Technical':'#60A5FA','Content':'#4ADE80','Schema':'#A78BFA','Links':'#FB923C','ASO':'#F472B6','Local SEO':'#2DD4BF','AI/GEO':'#22D3EE','CRO':'#FBBF24','Analytics':'#94A3B8','Competitive':'#F87171'};
+const CAT_ES = {'Technical':'Técnico','Content':'Contenido','Schema':'Schema','Links':'Link Building','ASO':'ASO','Local SEO':'SEO Local','AI/GEO':'IA / GEO','CRO':'CRO','Analytics':'Analítica','Competitive':'Competencia'};
+const CATS = {
+  'R1':['Content'],'R2':['Technical'],'R3':['Technical','Content'],'R4':['Content'],'R5':['Content'],
+  'N1':['Technical'],'N2':['Technical'],'N3':['Content'],'N4':['Schema'],'N5':['Technical'],'N6':['Technical']
+};
+function initCats() {
+  const isEs = document.body.classList.contains('es');
+  Object.entries(CATS).forEach(([id, cats]) => {
+    const row = document.getElementById('task-' + id);
+    if (!row) return;
+    const initiative = row.querySelector('.td-initiative');
+    if (!initiative || initiative.querySelector('.cat-badge')) return;
+    const catArr = Array.isArray(cats) ? cats : [cats];
+    const firstSpan = initiative.querySelector('.t-en');
+    catArr.forEach(cat => {
+      const label = isEs ? (CAT_ES[cat]||cat) : cat;
+      const col = CAT_COLORS[cat]||'#94A3B8';
+      const badge = document.createElement('span');
+      badge.className = 'cat-badge'; badge.setAttribute('data-cat', cat);
+      badge.style.cssText = `display:inline-flex;align-items:center;font-size:9px;font-weight:600;padding:1px 5px;border-radius:3px;margin-left:4px;vertical-align:middle;color:${col};background:${col}1a;border:1px solid ${col}33`;
+      badge.textContent = label;
+      if (firstSpan && firstSpan.nextSibling) initiative.insertBefore(badge, firstSpan.nextSibling);
+      else initiative.appendChild(badge);
+    });
+  });
+}
+
+// ── Recurring tasks ──
+const RECURRING = new Set([]);
+
+function initRecurring() {
+  const isEs = document.body.classList.contains('es');
+  RECURRING.forEach(id => {
+    const row = document.getElementById('task-' + id);
+    if (!row || row.querySelector('.rec-badge')) return;
+    const initiative = row.querySelector('.td-initiative');
+    if (!initiative) return;
+    const badge = document.createElement('span');
+    badge.className = 'rec-badge';
+    badge.style.cssText = 'display:inline-flex;align-items:center;font-size:9px;font-weight:600;padding:1px 6px;border-radius:3px;margin-left:4px;vertical-align:middle;color:#C084FC;background:rgba(192,132,252,.1);border:1px solid rgba(192,132,252,.3)';
+    badge.innerHTML = isEs ? '🔄 Recurrente' : '🔄 Recurring';
+    const firstSpan = initiative.querySelector('.t-en');
+    if (firstSpan && firstSpan.nextSibling) initiative.insertBefore(badge, firstSpan.nextSibling);
+    else initiative.appendChild(badge);
+  });
+}
+
+function initDeps() {
+  Object.entries(DEPS).forEach(([taskId, deps]) => {
+    const row = document.getElementById('task-' + taskId);
+    if (!row) return;
+    // Add dep badge (with lock icon) below task title only
+    const initiative = row.querySelector('.td-initiative');
+    if (initiative && !initiative.querySelector('.dep-badge')) {
+      const isEs = document.body.classList.contains('es');
+      const badge = document.createElement('div');
+      badge.className = 'dep-badge';
+      badge.setAttribute('data-dep-tip', (isEs ? 'Requiere completar primero: ' : 'Must complete first: ') + deps.join(', '));
+      badge.innerHTML = '🔒 <span class="dep-label t-en">Requires:</span><span class="dep-label t-es" style="display:none">Requiere:</span> ' +
+        deps.map(d => `<strong>${d}</strong>`).join(', ');
+      initiative.appendChild(badge);
+    }
+  });
+}
+
+function initTbodyDrop() {
+  document.querySelectorAll('.task-table tbody').forEach(tb => {
+    tb.addEventListener('dragover', e => e.preventDefault());
+    tb.addEventListener('drop', e => {
+      e.preventDefault();
+      if (!dragSrc) return;
+      if (!tb.contains(dragSrc)) {
+        tb.appendChild(dragSrc);
+        makeDraggable(dragSrc, tb);
+      }
+    });
+  });
+}
+</script>
+</body>
+</html>
