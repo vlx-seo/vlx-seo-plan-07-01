@@ -300,7 +300,7 @@ body.show-details .btn-d-on{display:inline}
     <div class="score-badge">
       <div class="score-num">4/7</div>
       <div class="score-label"><span class="t-en">Must-Fix Resolved</span><span class="t-es">Must-Fix Resueltos</span></div>
-      <div class="score-verdict"><span class="t-en">1 CRITICAL STILL OPEN</span><span class="t-es">1 CRÍTICO SIN RESOLVER</span></div>
+      <div class="score-verdict"><span class="t-en">M5 + BLOG VISUALS OPEN</span><span class="t-es">M5 + VISUALES DE BLOG</span></div>
     </div>
   </div>
   <div class="status-grid">
@@ -310,6 +310,7 @@ body.show-details .btn-d-on{display:inline}
     <div class="status-card orange has-tip" data-tip-en="46 of 185 pages still lack og:image: the 12 industry/app pages, 11 blog posts, and 22 more (pricing, integrations, demo, checklists index, whats-new, security, developers, etc.)." data-tip-es="46 de 185 páginas siguen sin og:image: las 12 páginas de industria/app, 11 posts de blog, y 22 páginas más (pricing, integrations, demo, checklists index, whats-new, security, developers, etc.)."><div class="s-label"><span class="t-en">Missing og:image</span><span class="t-es">og:image Faltantes</span></div><div class="s-value">46 / 185</div><div class="s-sub"><span class="t-en">12 industry + 11 blog + 23 other</span><span class="t-es">12 industria + 11 blog + 23 otras</span></div></div>
     <div class="status-card orange has-tip" data-tip-en="39/185 pages have an empty title or one over 60 characters; 47/185 have an empty meta description or one over 160 characters. Worth a cleanup pass before launch." data-tip-es="39/185 páginas con title vacío o >60 caracteres; 47/185 con meta description vacía o >160 caracteres. Vale una pasada de limpieza antes de lanzar."><div class="s-label"><span class="t-en">Titles / Meta out of range</span><span class="t-es">Titles / Meta fuera de rango</span></div><div class="s-value">39 / 47</div><div class="s-sub"><span class="t-en">titles &gt;60c · meta &gt;160c</span><span class="t-es">titles &gt;60c · meta &gt;160c</span></div></div>
     <div class="status-card green has-tip" data-tip-en="Sitemap grew from 175 to 185 URLs, 100% canonicalized to vlx.ai (production domain) though served from dev.vlx.ai. SSR works: every page returns full HTML with H1/schema/links without needing JS (confirmed via raw fetch)." data-tip-es="El sitemap creció de 175 a 185 URLs, 100% canonicalizado a vlx.ai (dominio de producción) aunque se sirve desde dev.vlx.ai. SSR funcionando: todas las páginas devuelven HTML completo con H1/schema/links sin necesitar JS (confirmado vía fetch crudo)."><div class="s-label"><span class="t-en">Sitemap + SSR</span><span class="t-es">Sitemap + SSR</span></div><div class="s-value">185 URLs</div><div class="s-sub"><span class="t-en">SSR OK · 100% canonical to vlx.ai</span><span class="t-es">SSR OK · 100% canonical a vlx.ai</span></div></div>
+    <div class="status-card red has-tip" data-tip-en="From the GTM Blog Posts Review: ~46 blog/checklist/use-case pages have visual defects — broken images (12), FAQ/list styles not loading (~14), ampersand entity shown in H1 (7), embeds/dynamic content not loading (6), bad spacing (~8), broken CTAs (2), icons not loading (2), a table not loading all data (1) and other render defects. HTML/structure issues excluded per scope." data-tip-es="Del GTM Blog Posts Review: ~46 páginas de blog/checklist/use-case con defectos visuales — imágenes rotas (12), estilos de FAQ/listas que no cargan (~14), entidad de ampersand visible en H1 (7), embebidos/contenido dinámico que no carga (6), espaciado incorrecto (~8), CTAs rotos (2), íconos que no cargan (2), una tabla que no carga todos los datos (1) y otros defectos de render. Problemas de HTML/estructura excluidos por alcance."><div class="s-label"><span class="t-en">Blog Visual Blockers</span><span class="t-es">Blockers Visuales de Blog</span></div><div class="s-value">9 · ~46 pgs</div><div class="s-sub"><span class="t-en">GTM Blog Posts Review · new</span><span class="t-es">GTM Blog Posts Review · nuevo</span></div></div>
   </div>
 </div>
 
@@ -445,7 +446,173 @@ body.show-details .btn-d-on{display:inline}
   <div class="blocker-note"><span class="t-en">✅ 4 resolved (M2, M3, M4, M6) · ❌ 1 not resolved (M5 paid LPs) · 🟡 2 partial (M1 LCP, M7 blog pagination)</span><span class="t-es" style="display:none">✅ 4 resueltos (M2, M3, M4, M6) · ❌ 1 no resuelto (M5 LPs pagas) · 🟡 2 parciales (M1 LCP, M7 paginación blog)</span></div>
 </div>
 
-<!-- ═══ SLIDE 5 — RECOMMENDED (NON-BLOCKING) ═══ -->
+<!-- ═══ SLIDE 5 — BLOG POSTS · VISUAL ERRORS (BLOCKERS) ═══ -->
+<div class="slide slide-blockers">
+  <div class="accent-bar"></div><div class="grid-bg"></div>
+  <div>
+    <div class="overline"><span class="t-en">Add-on blockers · GTM Blog Posts Review</span><span class="t-es">Blockers adicionales · GTM Blog Posts Review</span></div>
+    <h2><span class="t-en">Blog Posts — Visual Errors</span><span class="t-es">Blog Posts — Errores Visuales</span> <span class="progress-counter" style="display:inline;font-size:16px;color:#475569;font-weight:400;margin-left:12px"><span class="done-count">0</span>/<span class="total-count">9</span> <span class="t-en">to fix</span><span class="t-es">por corregir</span></span></h2>
+    <div class="deck-sub"><span class="t-en">~46 blog / checklist / use-case pages with visual defects. HTML/structure issues (list structure, headings, meta) excluded per scope — tracked separately.</span><span class="t-es">~46 páginas de blog / checklist / use-case con defectos visuales. Los problemas de HTML/estructura (list structure, encabezados, meta) se excluyen por alcance — se siguen aparte.</span></div>
+  </div>
+  <div class="blockers-grid">
+    <!-- V1 -->
+    <div id="task-V1" class="blocker-card task-row">
+      <div class="b-id">🖼️ V1 · <span class="t-en">Critical</span><span class="t-es">Crítico</span></div>
+      <div class="b-title"><span class="t-en">Broken images across posts</span><span class="t-es">Imágenes rotas en varios posts</span></div>
+      <div class="b-fix"><span class="t-en"><strong>12 pages</strong> render a broken image (e.g. /blog/construction-industry-trends…, /use-case/…hotel-room-housekeeping/, /blog/why-audits-failed…, /blog/difference-qms-eqms/). Fix asset paths / hosting.</span><span class="t-es"><strong>12 páginas</strong> muestran una imagen rota (ej. /blog/construction-industry-trends…, /use-case/…hotel-room-housekeeping/, /blog/why-audits-failed…, /blog/difference-qms-eqms/). Corregir rutas de assets / hosting.</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">M · 12 pgs</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('V1')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('V1','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('V1','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('V1','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- V2 -->
+    <div id="task-V2" class="blocker-card high task-row">
+      <div class="b-id">🎨 V2 · <span class="t-en">High</span><span class="t-es">Alto</span></div>
+      <div class="b-title"><span class="t-en">Icons not loading</span><span class="t-es">Íconos no cargan</span></div>
+      <div class="b-fix"><span class="t-en"><strong>2 checklists</strong> show missing icons: /checklists/6s-lean-audit-checklist/ and /checklists/brc-audit-checklist…/.</span><span class="t-es"><strong>2 checklists</strong> muestran íconos faltantes: /checklists/6s-lean-audit-checklist/ y /checklists/brc-audit-checklist…/.</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">S · 2 pgs</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('V2')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('V2','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('V2','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('V2','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- V3 -->
+    <div id="task-V3" class="blocker-card task-row">
+      <div class="b-id">🔌 V3 · <span class="t-en">Critical</span><span class="t-es">Crítico</span></div>
+      <div class="b-title"><span class="t-en">Embedded / dynamic content not loading</span><span class="t-es">Contenido embebido / dinámico no carga</span></div>
+      <div class="b-fix"><span class="t-en"><strong>6 pages</strong>: best-gemba-walk, sb-326-balcony-laws, hotel-maintenance, why-container-inspections, food-safety-checklist, and the "Sample Incident Report Template" on how-to-write-an-incident-report.</span><span class="t-es"><strong>6 páginas</strong>: best-gemba-walk, sb-326-balcony-laws, hotel-maintenance, why-container-inspections, food-safety-checklist, y la "Sample Incident Report Template" en how-to-write-an-incident-report.</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">M · 6 pgs</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('V3')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('V3','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('V3','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('V3','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- V4 -->
+    <div id="task-V4" class="blocker-card task-row">
+      <div class="b-id">🔗 V4 · <span class="t-en">Critical</span><span class="t-es">Crítico</span></div>
+      <div class="b-title"><span class="t-en">Broken CTAs</span><span class="t-es">CTAs rotos</span></div>
+      <div class="b-fix"><span class="t-en">/checklists/what-to-look-for-when-renting-a-houses/ — CTAs load no links or styles; /blog/photo-authentication-software…/ — the end-of-content CTA doesn't work.</span><span class="t-es">/checklists/what-to-look-for-when-renting-a-houses/ — los CTAs no cargan links ni estilos; /blog/photo-authentication-software…/ — el CTA al final del contenido no funciona.</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">S · 2 pgs</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('V4')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('V4','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('V4','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('V4','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- V5 -->
+    <div id="task-V5" class="blocker-card task-row">
+      <div class="b-id">🔤 V5 · <span class="t-en">Critical</span><span class="t-es">Crítico</span></div>
+      <div class="b-title"><span class="t-en">H1 renders a literal "&amp;amp;"</span><span class="t-es">El H1 muestra un "&amp;amp;" literal</span></div>
+      <div class="b-fix"><span class="t-en"><strong>7 posts</strong> render "&amp;amp;" in the H1 (encoding bug): on-site-inspection-methods, inspection-software-that-prevents-fraud, financial-software-that-cuts-risk, 7-modern-inspection-methods, truck-inspection-checklist, how-to-write-an-incident-report, why-supply-chain-management-software-essential.</span><span class="t-es"><strong>7 posts</strong> muestran "&amp;amp;" en el H1 (bug de encoding): on-site-inspection-methods, inspection-software-that-prevents-fraud, financial-software-that-cuts-risk, 7-modern-inspection-methods, truck-inspection-checklist, how-to-write-an-incident-report, why-supply-chain-management-software-essential.</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">XS · 7 pgs</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('V5')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('V5','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('V5','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('V5','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- V6 -->
+    <div id="task-V6" class="blocker-card high task-row">
+      <div class="b-id">📋 V6 · <span class="t-en">High</span><span class="t-es">Alto</span></div>
+      <div class="b-title"><span class="t-en">FAQ / list styles not loading</span><span class="t-es">Estilos de FAQ / listas no cargan</span></div>
+      <div class="b-fix"><span class="t-en"><strong>~14 pages</strong> where FAQ answer lists render without styles (e.g. iso-9001, food-safety, mold-inspection, house-insurance, hotel-maintenance, financial-software-that-cuts-risk).</span><span class="t-es"><strong>~14 páginas</strong> donde las listas de respuestas de FAQ se muestran sin estilos (ej. iso-9001, food-safety, mold-inspection, house-insurance, hotel-maintenance, financial-software-that-cuts-risk).</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">M · ~14 pgs</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('V6')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('V6','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('V6','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('V6','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- V7 -->
+    <div id="task-V7" class="blocker-card high task-row">
+      <div class="b-id">↕️ V7 · <span class="t-en">High</span><span class="t-es">Alto</span></div>
+      <div class="b-title"><span class="t-en">Bad spacing / unsettled text</span><span class="t-es">Espaciado incorrecto / texto mal asentado</span></div>
+      <div class="b-fix"><span class="t-en"><strong>~8 pages</strong> with extra/broken spacing or unsettled FAQ text (e.g. understanding-qapi, boiler-maintenance, steel-pipes-oil-gas, pre-drywall, health-inspection-restaurants).</span><span class="t-es"><strong>~8 páginas</strong> con espaciado extra/roto o texto de FAQ mal asentado (ej. understanding-qapi, boiler-maintenance, steel-pipes-oil-gas, pre-drywall, health-inspection-restaurants).</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">M · ~8 pgs</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('V7')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('V7','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('V7','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('V7','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- V8 -->
+    <div id="task-V8" class="blocker-card high task-row">
+      <div class="b-id">📊 V8 · <span class="t-en">High</span><span class="t-es">Alto</span></div>
+      <div class="b-title"><span class="t-en">Table not loading all data</span><span class="t-es">Tabla no carga todos los datos</span></div>
+      <div class="b-fix"><span class="t-en">/checklists/…forklift/ — the "Sample Forklift Daily Inspection Form" table doesn't load all its data; its lists also have an empty first item.</span><span class="t-es">/checklists/…forklift/ — la tabla "Sample Forklift Daily Inspection Form" no carga todos sus datos; además sus listas tienen el primer ítem vacío.</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">S · 1 pg</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('V8')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('V8','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('V8','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('V8','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- V9 -->
+    <div id="task-V9" class="blocker-card high task-row">
+      <div class="b-id">🧩 V9 · <span class="t-en">High</span><span class="t-es">Alto</span></div>
+      <div class="b-title"><span class="t-en">Other render defects</span><span class="t-es">Otros defectos de render</span></div>
+      <div class="b-fix"><span class="t-en">Text not aligned to its list items (strengthening-trust-…lending, evolution-of-audits); broken display + content inside a &lt;!Doctype html&gt; (virtual-inspections-shaping-the-future); visible &lt;code&gt; tags (seeing-risk-before-it-spreads).</span><span class="t-es">Texto no alineado con sus ítems de lista (strengthening-trust-…lending, evolution-of-audits); display roto + contenido dentro de un &lt;!Doctype html&gt; (virtual-inspections-shaping-the-future); etiquetas &lt;code&gt; visibles (seeing-risk-before-it-spreads).</span></div>
+      <div class="b-footer">
+        <span class="b-pill pill-effort">M · 4 pgs</span>
+        <div style="display:flex;align-items:center;gap:6px">
+          <button class="b-done-btn" onclick="toggleDone('V9')">○</button>
+          <div class="b-owner-pills">
+            <button class="owner-pill" data-owner="Lau" onclick="setOwner('V9','Lau')">Lau</button>
+            <button class="owner-pill" data-owner="Hans" onclick="setOwner('V9','Hans')">Hans</button>
+            <button class="owner-pill" data-owner="Abe" onclick="setOwner('V9','Abe')">Abe</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="blocker-note"><span class="t-en">Note: fixing list structure depends on the site builder (pending); the items above are render/style/asset defects visible to users. Source: GTM – VLX Marketing Site – Blog Posts Review.</span><span class="t-es" style="display:none">Nota: corregir la estructura de listas depende del builder (pendiente); lo de arriba son defectos de render/estilos/assets visibles al usuario. Fuente: GTM – VLX Marketing Site – Blog Posts Review.</span></div>
+</div>
+
+<!-- ═══ SLIDE 6 — RECOMMENDED (NON-BLOCKING) ═══ -->
 <div class="slide slide-phase" id="slide-recomendados">
   <div class="accent-bar"></div><div class="grid-bg"></div>
   <div class="phase-header">
@@ -535,11 +702,12 @@ body.show-details .btn-d-on{display:inline}
   <ul class="next-list">
     <li><span class="step-num">1</span><span><span class="t-en"><strong>Confirm with Hans/Abe</strong> exactly which branch/environment dev.vlx.ai is (homepage copy changed materially vs Jun 19).</span><span class="t-es"><strong>Confirmar con Hans/Abe</strong> qué rama/ambiente es exactamente dev.vlx.ai (el copy de homepage cambió de forma material vs. lo visto el 19-jun).</span></span></li>
     <li><span class="step-num">2</span><span><span class="t-en"><strong>Fix the 13 paid landing pages</strong> — still the only unresolved critical blocker from the original list; with active Capterra/G2/LinkedIn spend this is money dropping into 404s.</span><span class="t-es"><strong>Arreglar las 13 landing pages pagas</strong> — sigue siendo el único bloqueador crítico sin resolver de la lista original; con inversión activa en Capterra/G2/LinkedIn esto es dinero cayendo en 404.</span></span></li>
-    <li><span class="step-num">3</span><span><span class="t-en"><strong>Fix /blog/page/N/</strong> — either remove them from the sitemap, or make them serve real content at that path (don't redirect to ?page=N with noindex).</span><span class="t-es"><strong>Corregir /blog/page/N/</strong> — o quitarlas del sitemap, o hacer que sirvan contenido real en esa ruta (no redirigir a ?page=N con noindex).</span></span></li>
-    <li><span class="step-num">4</span><span><span class="t-en"><strong>Add the 2 old redirects</strong> (/oil-and-gas/, /financial-institutions/).</span><span class="t-es"><strong>Agregar los 2 redirects viejos</strong> (/oil-and-gas/, /financial-institutions/).</span></span></li>
-    <li><span class="step-num">5</span><span><span class="t-en"><strong>Fill the 46 missing og:image</strong>, prioritizing the 12 industry pages (highest commercial intent).</span><span class="t-es"><strong>Rellenar los 46 og:image faltantes</strong>, priorizando las 12 páginas de industria (son las de mayor intención comercial).</span></span></li>
-    <li><span class="step-num">6</span><span><span class="t-en"><strong>Titles/meta descriptions pass</strong> on the ~40–47 pages out of range.</span><span class="t-es"><strong>Pasada de títulos/meta descriptions</strong> en las ~40-47 páginas fuera de rango.</span></span></li>
-    <li><span class="step-num">7</span><span><span class="t-en">Once the site is reachable without Cognito (or given a bypass), <strong>run real PSI/Lighthouse</strong> on the hub to confirm the LCP.</span><span class="t-es">Una vez el sitio esté accesible sin Cognito (o me den una forma de bypass), <strong>correr PSI/Lighthouse real</strong> sobre el hub para confirmar el LCP.</span></span></li>
+    <li><span class="step-num">3</span><span><span class="t-en"><strong>Fix the blog post visual errors</strong> — broken images, embeds, CTAs, "&amp;amp;" in H1, FAQ/list styles (~46 pages, GTM Blog Posts Review). HTML/structure issues tracked separately.</span><span class="t-es"><strong>Corregir los errores visuales de los blog posts</strong> — imágenes rotas, embebidos, CTAs, "&amp;amp;" en el H1, estilos de FAQ/listas (~46 páginas, GTM Blog Posts Review). Los problemas de HTML/estructura se siguen aparte.</span></span></li>
+    <li><span class="step-num">4</span><span><span class="t-en"><strong>Fix /blog/page/N/</strong> — either remove them from the sitemap, or make them serve real content at that path (don't redirect to ?page=N with noindex).</span><span class="t-es"><strong>Corregir /blog/page/N/</strong> — o quitarlas del sitemap, o hacer que sirvan contenido real en esa ruta (no redirigir a ?page=N con noindex).</span></span></li>
+    <li><span class="step-num">5</span><span><span class="t-en"><strong>Add the 2 old redirects</strong> (/oil-and-gas/, /financial-institutions/).</span><span class="t-es"><strong>Agregar los 2 redirects viejos</strong> (/oil-and-gas/, /financial-institutions/).</span></span></li>
+    <li><span class="step-num">6</span><span><span class="t-en"><strong>Fill the 46 missing og:image</strong>, prioritizing the 12 industry pages (highest commercial intent).</span><span class="t-es"><strong>Rellenar los 46 og:image faltantes</strong>, priorizando las 12 páginas de industria (son las de mayor intención comercial).</span></span></li>
+    <li><span class="step-num">7</span><span><span class="t-en"><strong>Titles/meta descriptions pass</strong> on the ~40–47 pages out of range.</span><span class="t-es"><strong>Pasada de títulos/meta descriptions</strong> en las ~40-47 páginas fuera de rango.</span></span></li>
+    <li><span class="step-num">8</span><span><span class="t-en">Once the site is reachable without Cognito (or given a bypass), <strong>run real PSI/Lighthouse</strong> on the hub to confirm the LCP.</span><span class="t-es">Una vez el sitio esté accesible sin Cognito (o me den una forma de bypass), <strong>correr PSI/Lighthouse real</strong> sobre el hub para confirmar el LCP.</span></span></li>
   </ul>
 </div>
 
